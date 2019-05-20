@@ -30,7 +30,7 @@ public class RegistrationQueryImpl implements RegistrationQuery {
         return query.select(registration).from(registration).where(
                 registration.deviceId.eq(deviceId)
                         .and(registration.retired.eq(false))
-        ).orderBy(registration.dateRegistered.desc()).fetchOne();
+        ).orderBy(registration.dateRegistered.desc()).fetchFirst();
     }
 
     @Override
@@ -38,8 +38,8 @@ public class RegistrationQueryImpl implements RegistrationQuery {
         QRegistration registration = QRegistration.registration;
         JPAQuery<?> query = new JPAQuery<Void>(entityManager);
         return query.select(registration).from(registration).where(
-                registration.deviceId.eq(phoneNumber)
+                registration.phoneNumber.eq(phoneNumber)
                         .and(registration.retired.eq(false))
-        ).orderBy(registration.dateRegistered.desc()).fetchOne();
+        ).orderBy(registration.dateRegistered.desc()).fetchFirst();
     }
 }
