@@ -30,7 +30,7 @@ public class MmsController {
         mmsService.saveMms(mms);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(path = "/collection",consumes = "application/json")
     public void saveMmsCollection(@RequestBody List<Mms> mmsList){
         mmsService.saveAllMms(mmsList);
     }

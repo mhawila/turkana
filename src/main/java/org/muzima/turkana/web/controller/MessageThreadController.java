@@ -30,7 +30,7 @@ public class MessageThreadController {
         messageThreadService.saveMessageThread(messageThread);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(path = "/collection",consumes = "application/json")
     public void saveMessageThreads(@RequestBody List<MessageThread> messageThreadList){
         messageThreadService.saveMessageThreads(messageThreadList);
     }

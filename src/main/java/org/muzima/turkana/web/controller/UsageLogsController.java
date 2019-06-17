@@ -35,7 +35,7 @@ public class UsageLogsController {
         usageLogsService.saveUsageLogs(usageLogs);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(path = "/collection",consumes = "application/json")
     public void saveAllLogs(@RequestBody List<UsageLogs> usageLogsList){
         usageLogsService.saveAllLogs(usageLogsList);
     }

@@ -30,7 +30,7 @@ public class SmsController {
         smsService.saveSms(sms);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping(path = "/collection",consumes = "application/json")
     public void saveAllSms(@RequestBody List<Sms> smsList) {
         smsService.saveAllSms(smsList);
     }
