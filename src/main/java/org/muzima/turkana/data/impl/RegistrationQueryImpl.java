@@ -11,7 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 /**
- * Created by Willa aka Baba Imu on 5/17/19.
+ * @author Willa aka Baba Imu on 5/17/19.
  *
  * This class is used for custom queries that are difficult to express using the Spring Data convention.
  * Use the Corresponding RegistrationRepository which provide standard methods such as save, findAll, count (See SpringData documentation)

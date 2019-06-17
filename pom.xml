@@ -14,6 +14,25 @@
 	<name>Turkana</name>
 	<description>Message Backup Server</description>
 
+	<developers>
+
+		<developer>
+			<name>Samuel Owino</name>
+			<email>samuelowino43@gmail.com</email>
+			<organization>mUzima</organization>
+			<organizationUrl>www.muzima.org</organizationUrl>
+		</developer>
+
+		<developer>
+			<name>Mhawila Mhawila</name>
+			<email>nill</email>
+			<organization>VUMC</organization>
+			<organizationUrl>nill</organizationUrl>
+		</developer>
+	</developers>
+
+
+
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>

@@ -7,7 +7,10 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 public abstract class Message {
+
     @Id
+    protected String uuid;
+
     protected Long id;
 
     @Column(name = "date_sent")
@@ -190,5 +193,13 @@ public abstract class Message {
 
     public void setTransportType(String transportType) {
         this.transportType = transportType;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

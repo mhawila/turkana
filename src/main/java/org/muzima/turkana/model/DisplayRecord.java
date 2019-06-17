@@ -13,8 +13,8 @@ public abstract class DisplayRecord {
     @Column(name ="thread_type")
     protected long type;
 
-    @Column(name ="thread_recipient")
-    protected SignalRecipient recipient;
+    @Column(name ="thread_recipient_phone")
+    protected String recipient;
 
     @Column(name ="date_sent")
     protected long dateSent;
@@ -41,7 +41,7 @@ public abstract class DisplayRecord {
 
     }
 
-    public DisplayRecord(String body, SignalRecipient recipient, long dateSent,
+    public DisplayRecord(String body, long dateSent,
                          long dateReceived, long threadId, int deliveryStatus, int deliveryReceiptCount,
                          long type, int readReceiptCount) {
         this.threadId = threadId;
@@ -57,10 +57,6 @@ public abstract class DisplayRecord {
 
     public long getType() {
         return type;
-    }
-
-    public SignalRecipient getRecipient() {
-        return recipient;
     }
 
     public long getDateSent() {

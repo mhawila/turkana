@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- * Created by Willa aka Baba Imu on 5/20/19.
+ * @author Willa aka Baba Imu on 5/20/19.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { TurkanaApplication.class, H2TestConfig.class })
