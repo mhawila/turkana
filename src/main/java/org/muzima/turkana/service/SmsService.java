@@ -16,13 +16,13 @@ public interface SmsService {
 
     public void saveAllSms(List<Sms> smsList);
 
-    public Sms getSms(String uuid);
+    public Sms getSms(Long id);
 
     public List<Sms> getAllSms();
 
     public void updateSms(Sms sms);
 
-    public void deleteSms(String uuid);
+    public void deleteSms(Long id);
 
 
 }

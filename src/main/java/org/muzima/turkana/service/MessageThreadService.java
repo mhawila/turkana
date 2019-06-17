@@ -16,12 +16,12 @@ public interface MessageThreadService {
 
     public void saveMessageThreads(List<MessageThread> messageThreadList);
 
-    public MessageThread getMessageThread(String uuid);
+    public MessageThread getMessageThread(Long id);
 
     public List<MessageThread> getAllMessageThreads();
 
     public MessageThread updateMessageThread(MessageThread messageThread);
 
-    public void deleteMessageThread(String uuid);
+    public void deleteMessageThread(Long id);
 
 }

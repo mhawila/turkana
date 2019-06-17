@@ -30,8 +30,8 @@ public class MmsServiceImpl implements MmsService {
     }
 
     @Override
-    public Mms getMms(String uuid) {
-        return mmsRepository.findById(uuid).orElseGet(Mms::new);
+    public Mms getMms(Long id) {
+        return mmsRepository.findById(id).orElseGet(Mms::new);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MmsServiceImpl implements MmsService {
     }
 
     @Override
-    public void deleteMms(String uuid) {
-        mmsRepository.deleteById(uuid);
+    public void deleteMms(Long id) {
+        mmsRepository.deleteById(id);
     }
 }

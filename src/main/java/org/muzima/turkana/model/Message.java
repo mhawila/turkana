@@ -1,6 +1,7 @@
 package org.muzima.turkana.model;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
@@ -9,8 +10,7 @@ import java.time.LocalDateTime;
 public abstract class Message {
 
     @Id
-    protected String uuid;
-
+    @GeneratedValue
     protected Long id;
 
     @Column(name = "date_sent")
@@ -195,11 +195,5 @@ public abstract class Message {
         this.transportType = transportType;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
 }

@@ -18,11 +18,11 @@ public interface UsageLogsService {
 
     public void saveAllLogs(List<UsageLogs> usageLogsList);
 
-    public UsageLogs getUsageLogsEntry(String uuid);
+    public UsageLogs getUsageLogsEntry(Long id);
 
     public List<UsageLogs> getAllUsageLogs();
 
     public UsageLogs updateUsageLogs(UsageLogs usageLogs);
 
-    public void deleteUsageLogs(String uuid);
+    public void deleteUsageLogs(Long id);
 }

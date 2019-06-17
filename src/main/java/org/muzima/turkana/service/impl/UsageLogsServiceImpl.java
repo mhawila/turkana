@@ -29,8 +29,8 @@ public class UsageLogsServiceImpl implements UsageLogsService {
     }
 
     @Override
-    public UsageLogs getUsageLogsEntry(String uuid) {
-        return usageLogsRepository.findById(uuid).orElseGet(UsageLogs::new);
+    public UsageLogs getUsageLogsEntry(Long id) {
+        return usageLogsRepository.findById(id).orElseGet(UsageLogs::new);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class UsageLogsServiceImpl implements UsageLogsService {
     }
 
     @Override
-    public void deleteUsageLogs(String uuid) {
-        usageLogsRepository.deleteById(uuid);
+    public void deleteUsageLogs(Long id) {
+        usageLogsRepository.deleteById(id);
     }
 }

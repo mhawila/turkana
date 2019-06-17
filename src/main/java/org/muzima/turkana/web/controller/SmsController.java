@@ -35,9 +35,9 @@ public class SmsController {
         smsService.saveAllSms(smsList);
     }
 
-    @GetMapping(path = "/{uuid}", produces = "application/json")
-    public Sms getSms(@PathVariable(required = true) String uuid) {
-        return smsService.getSms(uuid);
+    @GetMapping(path = "/{id}", produces = "application/json")
+    public Sms getSms(@PathVariable(required = true) Long id) {
+        return smsService.getSms(id);
     }
 
     @GetMapping(produces = "application/json")
@@ -50,8 +50,8 @@ public class SmsController {
         smsService.updateSms(sms);
     }
 
-    @DeleteMapping(path = "/{uuid}", consumes = "application/json")
-    public void deleteSms(@PathVariable(required = true) String uuid) {
-        smsService.deleteSms(uuid);
+    @DeleteMapping(path = "/{id}", consumes = "application/json")
+    public void deleteSms(@PathVariable(required = true) Long id) {
+        smsService.deleteSms(id);
     }
 }

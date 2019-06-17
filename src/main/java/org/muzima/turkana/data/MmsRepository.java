@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface MmsRepository extends JpaRepository<Mms,String> {
+public interface MmsRepository extends JpaRepository<Mms,Long> {
 }

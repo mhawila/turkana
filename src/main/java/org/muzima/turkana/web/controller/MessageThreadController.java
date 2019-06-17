@@ -36,9 +36,9 @@ public class MessageThreadController {
     }
 
 
-    @GetMapping(value = "/{uuid}",produces = "application/json")
-    public MessageThread getMessageThread(@PathVariable(required = true) String uuid){
-        return messageThreadService.getMessageThread(uuid);
+    @GetMapping(value = "/{id}",produces = "application/json")
+    public MessageThread getMessageThread(@PathVariable(required = true) Long id){
+        return messageThreadService.getMessageThread(id);
     }
 
     @GetMapping(produces = "application/json")
@@ -51,8 +51,8 @@ public class MessageThreadController {
         return messageThreadService.updateMessageThread(messageThread);
     }
 
-    @DeleteMapping("/{uuid}")
-    public void deleteMessageThread(@PathVariable(required = true) String uuid){
-        messageThreadService.deleteMessageThread(uuid);
+    @DeleteMapping("/{id}")
+    public void deleteMessageThread(@PathVariable(required = true) Long id){
+        messageThreadService.deleteMessageThread(id);
     }
 }

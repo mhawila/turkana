@@ -1,6 +1,7 @@
 package org.muzima.turkana.model;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
@@ -8,7 +9,8 @@ import javax.persistence.MappedSuperclass;
 public abstract class DisplayRecord {
 
     @Id
-    protected String uuid;
+    @GeneratedValue
+    protected Long id;
 
     @Column(name ="thread_type")
     protected long type;
@@ -85,6 +87,14 @@ public abstract class DisplayRecord {
 
     public int getReadReceiptCount() {
         return readReceiptCount;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override

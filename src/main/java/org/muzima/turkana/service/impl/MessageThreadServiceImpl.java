@@ -30,8 +30,8 @@ public class MessageThreadServiceImpl implements MessageThreadService {
     }
 
     @Override
-    public MessageThread getMessageThread(String uuid) {
-        return messageThreadRepository.findById(uuid).orElseGet(MessageThread::new);
+    public MessageThread getMessageThread(Long id) {
+        return messageThreadRepository.findById(id).orElseGet(MessageThread::new);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MessageThreadServiceImpl implements MessageThreadService {
     }
 
     @Override
-    public void deleteMessageThread(String uuid) {
-        messageThreadRepository.deleteById(uuid);
+    public void deleteMessageThread(Long id) {
+        messageThreadRepository.deleteById(id);
     }
 }

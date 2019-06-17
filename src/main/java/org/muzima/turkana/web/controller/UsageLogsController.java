@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.muzima.turkana.web.controller.UsageLogsController.BASE_URL;
 
@@ -40,9 +41,9 @@ public class UsageLogsController {
         usageLogsService.saveAllLogs(usageLogsList);
     }
 
-    @GetMapping(path = "/{uuid}",produces = "appplication/json")
-    public UsageLogs getUsageLogsEntry(@PathVariable String uuid){
-        return usageLogsService.getUsageLogsEntry(uuid);
+    @GetMapping(path = "/{id}",produces = "appplication/json")
+    public UsageLogs getUsageLogsEntry(@PathVariable Long id){
+        return usageLogsService.getUsageLogsEntry(id);
     }
 
     @GetMapping(produces = "application/json")
@@ -55,8 +56,8 @@ public class UsageLogsController {
         return usageLogsService.updateUsageLogs(usageLogs);
     }
 
-    @DeleteMapping(path = "/{uuid}")
-    public void deleteUsageLogs(String uuid){
-        usageLogsService.deleteUsageLogs(uuid);
+    @DeleteMapping(path = "/{id}")
+    public void deleteUsageLogs(Long id){
+        usageLogsService.deleteUsageLogs(id);
     }
 }

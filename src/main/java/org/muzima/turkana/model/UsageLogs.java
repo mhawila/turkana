@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -12,7 +13,8 @@ import javax.persistence.Table;
 public class UsageLogs {
 
     @Id
-    private String uuid;
+    @GeneratedValue
+    private Long id;
 
     @Column(name = "timestamp")
     private String timestamp;
@@ -26,8 +28,8 @@ public class UsageLogs {
     public UsageLogs() {
     }
 
-    public UsageLogs(String uuid, String timestamp, String address, String logsText) {
-        this.uuid = uuid;
+    public UsageLogs(Long id, String timestamp, String address, String logsText) {
+        this.id = id;
         this.timestamp = timestamp;
         this.address = address;
         this.logsText = logsText;
@@ -41,12 +43,12 @@ public class UsageLogs {
         this.logsText = logsText;
     }
 
-    public String getUuid() {
-        return uuid;
+    public Long getId() {
+        return id;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTimestamp() {
@@ -68,7 +70,7 @@ public class UsageLogs {
     @Override
     public String toString() {
         return "UsageLogs{" +
-                "uuid='" + uuid + '\'' +
+                "id='" + id + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", address='" + address + '\'' +
                 '}';

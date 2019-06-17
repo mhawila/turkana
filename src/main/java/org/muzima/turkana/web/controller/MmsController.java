@@ -35,9 +35,9 @@ public class MmsController {
         mmsService.saveAllMms(mmsList);
     }
 
-    @GetMapping(value = "/{uuid}",produces = "application/json")
-    public Mms getMms(@PathVariable(required = true) String uuid){
-        return mmsService.getMms(uuid);
+    @GetMapping(value = "/{id}",produces = "application/json")
+    public Mms getMms(@PathVariable(required = true) Long id){
+        return mmsService.getMms(id);
     }
 
     @GetMapping(produces = "application/json")
@@ -50,8 +50,8 @@ public class MmsController {
         mmsService.updateMms(mms);
     }
 
-    @DeleteMapping("/{uuid}")
-    public void deleteMms(String uuid){
-        mmsService.deleteMms(uuid);
+    @DeleteMapping("/{id}")
+    public void deleteMms(Long id){
+        mmsService.deleteMms(id);
     }
 }

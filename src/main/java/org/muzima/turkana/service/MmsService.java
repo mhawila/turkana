@@ -16,11 +16,11 @@ public interface MmsService {
 
     public void saveAllMms(List<Mms> mmsList);
 
-    public Mms getMms(String uuid);
+    public Mms getMms(Long id);
 
     public List<Mms> getAllMms();
 
     public void updateMms(Mms mms);
 
-    public void deleteMms(String uuid);
+    public void deleteMms(Long id);
 }

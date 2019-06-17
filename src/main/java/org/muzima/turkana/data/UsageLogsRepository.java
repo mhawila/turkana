@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface UsageLogsRepository extends JpaRepository<UsageLogs,String> {
+public interface UsageLogsRepository extends JpaRepository<UsageLogs,Long> {
 }

@@ -30,8 +30,8 @@ public class SmsServiceImpl implements SmsService {
     }
 
     @Override
-    public Sms getSms(String uuid) {
-        Optional<Sms> smsOptional = smsRepository.findById(uuid);
+    public Sms getSms(Long id) {
+        Optional<Sms> smsOptional = smsRepository.findById(id);
         return smsOptional.orElseGet(Sms::new);
     }
 
@@ -46,7 +46,7 @@ public class SmsServiceImpl implements SmsService {
     }
 
     @Override
-    public void deleteSms(String uuid) {
-        smsRepository.deleteById(uuid);
+    public void deleteSms(Long id) {
+        smsRepository.deleteById(id);
     }
 }
