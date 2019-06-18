@@ -1,13 +1,16 @@
 package org.muzima.turkana.model;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
 public abstract class Message {
+
     @Id
+    @GeneratedValue
     protected Long id;
 
     @Column(name = "date_sent")
@@ -191,4 +194,6 @@ public abstract class Message {
     public void setTransportType(String transportType) {
         this.transportType = transportType;
     }
+
+
 }

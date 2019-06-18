@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Willa aka Baba Imu on 5/17/19.
+ * @author Willa aka Baba Imu on 5/17/19.
  */
 public class RequestFilter extends GenericFilterBean {
     protected static List<String> MESSAGE_POST_PATHS;

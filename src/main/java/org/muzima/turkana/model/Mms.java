@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Created by Willa aka Baba Imu on 5/17/19.
+ * @author Willa aka Baba Imu on 5/17/19.
  */
 @Entity
 @Table(name = "mms")

@@ -11,8 +11,28 @@
 	<groupId>org.muzima</groupId>
 	<artifactId>turkana</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>Turkana</name>
 	<description>Message Backup Server</description>
+
+	<developers>
+
+		<developer>
+			<name>Samuel Owino</name>
+			<email>samuelowino43@gmail.com</email>
+			<organization>mUzima</organization>
+			<organizationUrl>www.muzima.org</organizationUrl>
+		</developer>
+
+		<developer>
+			<name>Mhawila Mhawila (Willa)</name>
+			<email>a.mhawila@gmail.com</email>
+			<organization>VUMC</organization>
+			<organizationUrl> www.vumc.org</organizationUrl>
+		</developer>
+	</developers>
+
+
 
 	<properties>
 		<java.version>1.8</java.version>

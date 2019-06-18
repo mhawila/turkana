@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * Created by Willa aka Baba Imu on 5/20/19.
+ * @author Willa aka Baba Imu on 5/20/19.
  */
 @Configuration
 @EnableJpaRepositories(basePackages = "org.muzima.turkana")
