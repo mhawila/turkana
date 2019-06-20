@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
  * @author Samuel Owino
  */
 
-@Repository
 public interface MessageThreadRepository extends JpaRepository<MessageThread,Long> {
 
 }
