@@ -14,5 +14,5 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { TurkanaApplication.class, H2TestConfig.class })
 @ActiveProfiles("test")
-public class AbstractIntegrationTest {
+public abstract class AbstractIntegrationTest {
 }

@@ -24,11 +24,14 @@ public class MediaServiceImpl implements MediaService {
     @Autowired
     private MediaMetadataRepository metadataRepository;
 
+    @Autowired
+    private Utils utils;
+
     @Override
     @Transactional
     public void saveMedia(final Registration registration, final MediaMetadata mediaMetadata, final InputStream media) throws IOException {
         if(mediaMetadata.getFilePath() == null) {
-            mediaMetadata.setFilePath(Utils.getMediaFilePath(registration, mediaMetadata.getExtension()));
+            mediaMetadata.setFilePath(utils.getMediaFilePath(registration, mediaMetadata.getExtension()));
         }
 
         metadataRepository.save(mediaMetadata);
