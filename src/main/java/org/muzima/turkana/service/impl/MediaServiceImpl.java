@@ -1,5 +1,7 @@
 package org.muzima.turkana.service.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.muzima.turkana.Utils;
 import org.muzima.turkana.data.MediaMetadataRepository;
 import org.muzima.turkana.model.MediaMetadata;
@@ -20,6 +22,7 @@ import java.io.OutputStream;
  */
 @Service
 public class MediaServiceImpl implements MediaService {
+    private static final Log LOG = LogFactory.getLog(MediaServiceImpl.class);
 
     @Autowired
     private MediaMetadataRepository metadataRepository;
@@ -34,8 +37,8 @@ public class MediaServiceImpl implements MediaService {
             mediaMetadata.setFilePath(utils.getMediaFilePath(registration, mediaMetadata.getExtension()));
         }
 
+        LOG.debug("Media file path: " + mediaMetadata.getFilePath());
         metadataRepository.save(mediaMetadata);
-        System.out.println(mediaMetadata.getFilePath());
         try(OutputStream os = new FileOutputStream(new File(mediaMetadata.getFilePath()))) {
             int byt3;
             while((byt3 = media.read()) != -1) {

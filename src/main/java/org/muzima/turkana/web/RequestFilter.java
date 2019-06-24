@@ -8,6 +8,8 @@ import org.muzima.turkana.data.RegistrationRepository;
 import org.muzima.turkana.model.Registration;
 import org.muzima.turkana.web.controller.RegistrationController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -26,6 +28,8 @@ import java.util.Map;
 /**
  * @author Willa aka Baba Imu on 5/17/19.
  */
+@Component
+@Order(1)
 public class RequestFilter extends GenericFilterBean {
     protected static List<String> MESSAGE_POST_PATHS;
     protected static Map<Integer, String> HTTP_ERROR_CODES;
@@ -39,7 +43,7 @@ public class RequestFilter extends GenericFilterBean {
     private RegistrationQuery registrationQuery;
 
     static {
-        MESSAGE_POST_PATHS = Arrays.asList(new String[] { "api/mms", "api/sms"});
+        MESSAGE_POST_PATHS = Arrays.asList(new String[] { "api/mms", "api/sms", "api/media" });
         HTTP_ERROR_CODES = new HashMap<>(10);
         HTTP_ERROR_CODES.put(400, "Bad Request");
         HTTP_ERROR_CODES.put(401, "Unauthorized");
@@ -51,7 +55,7 @@ public class RequestFilter extends GenericFilterBean {
         if(request instanceof HttpServletRequest) {
             HttpServletRequest httpRequest = (HttpServletRequest) request;
             HttpServletResponse httpResponse = (HttpServletResponse) response;
-            String path = httpRequest.getPathInfo();
+            String path = httpRequest.getServletPath();
             String method = httpRequest.getMethod().toLowerCase();
             if(path.startsWith("/")) path = path.substring(1);
 
@@ -85,7 +89,9 @@ public class RequestFilter extends GenericFilterBean {
 
                         sendJSONError(httpResponse, 400, message, "/" + path);
                     } else {
-                        // TODO: Verify signature.
+                        // TODO: Verify signature. For now simply add the registration as the request attribute.
+                        httpRequest.setAttribute("registration", registration);
+                        chain.doFilter(httpRequest, response);
                     }
                 }
             }
@@ -99,13 +105,11 @@ public class RequestFilter extends GenericFilterBean {
         httpServletResponse.setContentType("application/json");
         httpServletResponse.setCharacterEncoding("UTF-8");
         JSONObject errorObject = new JSONObject();
-        errorObject.put("timeStamp", LocalDateTime.now());
+        errorObject.put("timeStamp", LocalDateTime.now().toString());
         errorObject.put("status", status);
         errorObject.put("error", HTTP_ERROR_CODES.get(status));
         errorObject.put("message", message);
         errorObject.put("path", path);
-        String jsonString = errorObject.toJSONString();
-        httpServletResponse.setContentLength(jsonString.length());
-        httpServletResponse.getWriter().write(jsonString);
+        errorObject.writeJSONString(httpServletResponse.getWriter());
     }
 }

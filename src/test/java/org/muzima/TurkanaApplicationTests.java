@@ -2,11 +2,17 @@ package org.muzima;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.runners.Suite;
+import org.muzima.turkana.UtilsTest;
+import org.muzima.turkana.data.RegistrationQueryIntegrationTest;
+import org.muzima.turkana.service.MediaServiceIntegrationTest;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		UtilsTest.class,
+		MediaServiceIntegrationTest.class,
+		RegistrationQueryIntegrationTest.class
+})
 public class TurkanaApplicationTests {
 
 	@Test

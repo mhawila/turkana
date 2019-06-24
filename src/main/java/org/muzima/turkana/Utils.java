@@ -73,7 +73,7 @@ public class Utils {
         String filePath = new StringBuilder(directory).append("/").append(UUID.randomUUID().toString())
                 .append("_")
                 .append(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-                .append(extension)
+                .append(extension.startsWith(".") ? extension : "." + extension)
                 .toString();
 
         return new File(filePath).getAbsolutePath();

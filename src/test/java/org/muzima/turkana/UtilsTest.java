@@ -32,9 +32,22 @@ public class UtilsTest extends AbstractIntegrationTest {
         File created = new File(utils.getMediaDirectory());
         if(created.exists()) cleanUpTestDirectories(created);
 
-        System.out.println("File path: " + filePath);
-        System.out.println("Expected pattern: " + expectedPattern);
         assertTrue("Method should return expected file path", filePath.matches(expectedPattern));
+    }
+
+    @Test
+    public void getMediaFilePath_shouldPutADotIfExtensionPassedDoesNotStartWithOne() {
+        utils.setMediaDirectory("media_directory");
+        Registration registration = new Registration();
+        registration.setDeviceId("deviceId");
+        String noDotExtension = "jpg";
+        String filePath = utils.getMediaFilePath(registration, noDotExtension);
+
+        // Remove the created directory.
+        File created = new File(utils.getMediaDirectory());
+        if(created.exists()) cleanUpTestDirectories(created);
+
+        assertTrue("filename extension should be separated by a dot", filePath.endsWith("." + noDotExtension));
     }
 
     @Test(expected = IllegalStateException.class)
