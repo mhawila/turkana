@@ -33,13 +33,13 @@ public class MediaServiceImpl implements MediaService {
     @Override
     @Transactional
     public void saveMedia(final Registration registration, final MediaMetadata mediaMetadata, final InputStream media) throws IOException {
-        if(mediaMetadata.getFilePath() == null) {
-            mediaMetadata.setFilePath(utils.getMediaFilePath(registration, mediaMetadata.getExtension()));
+        if(mediaMetadata.getServerFilePath() == null) {
+            mediaMetadata.setServerFilePath(utils.getMediaFilePath(registration, mediaMetadata.getExtension()));
         }
 
-        LOG.debug("Media file path: " + mediaMetadata.getFilePath());
+        LOG.debug("Media file path: " + mediaMetadata.getServerFilePath());
         metadataRepository.save(mediaMetadata);
-        try(OutputStream os = new FileOutputStream(new File(mediaMetadata.getFilePath()))) {
+        try(OutputStream os = new FileOutputStream(new File(mediaMetadata.getServerFilePath()))) {
             int byt3;
             while((byt3 = media.read()) != -1) {
                 os.write(byt3);

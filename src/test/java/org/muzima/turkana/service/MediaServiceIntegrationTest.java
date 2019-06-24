@@ -49,9 +49,9 @@ public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
 
         assertFalse(mediaFile.exists());
 
-        metadata.setFilePath(mediaPath);
+        metadata.setServerFilePath(mediaPath);
         metadata.setExtension(".jpg");
-        metadata.setReceived(LocalDateTime.now());
+        metadata.setDateReceived(LocalDateTime.now());
 
         List<MediaMetadata> metadatas = metadataRepository.findAll();
         assertTrue(metadatas.isEmpty());
@@ -68,7 +68,7 @@ public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
     @Test(expected = Exception.class)
     public void saveMedia_shouldThrowExceptionIfPathIsInvalid() throws IOException {
         MediaMetadata metadata = new MediaMetadata();
-        metadata.setFilePath("/this/path/does/not/exist");
+        metadata.setServerFilePath("/this/path/does/not/exist");
 
         mediaService.saveMedia(new Registration(), metadata, testMediaFileResource.getInputStream());
     }

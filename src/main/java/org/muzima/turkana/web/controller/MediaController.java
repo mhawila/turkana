@@ -1,5 +1,7 @@
 package org.muzima.turkana.web.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.muzima.turkana.model.MediaMetadata;
 import org.muzima.turkana.model.Registration;
 import org.muzima.turkana.service.MediaService;
@@ -18,6 +20,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping(MediaController.BASE_PATH)
+@Api(tags = "Media", description = "Images, Audios, Videos")
 public class MediaController {
     public static final String BASE_PATH = "api/media";
 
@@ -25,6 +28,7 @@ public class MediaController {
     private MediaService mediaService;
 
     @PostMapping(consumes = {"multipart/form-data", "application/json"})
+    @ApiOperation(value = "Posting Media File plus metadata in one request", notes = "Requires to pass a message signature as a request parameter")
     public void post(@RequestPart(name = "metadata") MediaMetadata mediaMetadata, @RequestPart(name = "file") MultipartFile mediaFile,
                        @RequestAttribute Registration registration) throws IOException {
         mediaService.saveMedia(registration, mediaMetadata, mediaFile.getInputStream());

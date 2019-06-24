@@ -1,5 +1,6 @@
 package org.muzima.turkana.web.controller;
 
+import io.swagger.annotations.Api;
 import org.muzima.turkana.model.MessageThread;
 import org.muzima.turkana.service.MessageThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import static org.muzima.turkana.web.controller.MessageThreadController.BASE_PAT
 
 @RestController
 @RequestMapping(BASE_PATH)
+@Api(tags = "Message Thread", description = "Message Threads")
 public class MessageThreadController {
 
     public static final String BASE_PATH = "api/thread";

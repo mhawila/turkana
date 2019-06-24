@@ -1,5 +1,7 @@
 package org.muzima.turkana.web.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.muzima.turkana.data.RegistrationRepository;
 import org.muzima.turkana.model.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import static org.muzima.turkana.web.controller.RegistrationController.BASE_PATH
 
 @RestController
 @RequestMapping(BASE_PATH)
+@Api(tags = "Registration", description = "Client Registration")
 public class RegistrationController {
     public static final String BASE_PATH = "api/registration";
 
@@ -26,6 +29,7 @@ public class RegistrationController {
     private RegistrationRepository regRepo;
 
     @GetMapping(path = { "", "/{phoneNumber}" }, produces = {"application/json"})
+    @ApiOperation("Returns a list of registrations or only those belonging to path variable {phoneNumber} if provided")
     public List<Registration> get(@PathVariable(required = false) final String phoneNumber) {
         List<Registration> l = new ArrayList<>();
         if("55".equals(phoneNumber)) {

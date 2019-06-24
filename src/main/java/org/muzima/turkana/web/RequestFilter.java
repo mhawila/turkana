@@ -59,12 +59,7 @@ public class RequestFilter extends GenericFilterBean {
             String method = httpRequest.getMethod().toLowerCase();
             if(path.startsWith("/")) path = path.substring(1);
 
-            if(RegistrationController.BASE_PATH.equals(path)) {
-                // TODO: Do the registration pre-check stuff.
-                // For now simply pass the request.
-                log.info("Request allowed through path: /" + path);
-                chain.doFilter(httpRequest, response);
-            } else if(MESSAGE_POST_PATHS.contains(path) && "post".equals(method)){
+            if(MESSAGE_POST_PATHS.contains(path) && "post".equals(method)) {
                 // handle posting
                 String signature = httpRequest.getParameter("signature");
                 String phoneNumber = httpRequest.getParameter("phoneNumber");
@@ -94,6 +89,14 @@ public class RequestFilter extends GenericFilterBean {
                         chain.doFilter(httpRequest, response);
                     }
                 }
+            } else {
+                if(RegistrationController.BASE_PATH.equals(path)) {
+                    // TODO: Do the registration pre-check stuff.
+                    // For now simply pass the request.
+
+                }
+                log.debug("Request allowed through path: /" + path);
+                chain.doFilter(httpRequest, response);
             }
         } else {
             chain.doFilter(request, response);
