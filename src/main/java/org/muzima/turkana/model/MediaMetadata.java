@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.time.LocalDateTime;
 
 /**
@@ -62,6 +63,12 @@ public class MediaMetadata {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "registration_id", referencedColumnName = "id")
     private Registration registration;
+
+    @Transient
+    private byte[] imageThumbnail;
+
+    @Transient
+    private String thumbnailType;
 
     public Long getId() {
         return id;
@@ -173,6 +180,30 @@ public class MediaMetadata {
 
     public void setIncomingStatus(Boolean incomingStatus) {
         this.incomingStatus = incomingStatus;
+    }
+
+    public Registration getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(Registration registration) {
+        this.registration = registration;
+    }
+
+    public byte[] getImageThumbnail() {
+        return imageThumbnail;
+    }
+
+    public void setImageThumbnail(byte[] imageThumbnail) {
+        this.imageThumbnail = imageThumbnail;
+    }
+
+    public String getThumbnailType() {
+        return thumbnailType;
+    }
+
+    public void setThumbnailType(String thumbnailType) {
+        this.thumbnailType = thumbnailType;
     }
 
     @Override

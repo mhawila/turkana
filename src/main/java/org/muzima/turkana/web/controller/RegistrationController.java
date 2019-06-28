@@ -31,6 +31,7 @@ public class RegistrationController {
     @GetMapping(path = { "", "/{phoneNumber}" }, produces = {"application/json"})
     @ApiOperation("Returns a list of registrations or only those belonging to path variable {phoneNumber} if provided")
     public List<Registration> get(@PathVariable(required = false) final String phoneNumber) {
+        // TODO: Dummy implementation (To replaced with real one)
         List<Registration> l = new ArrayList<>();
         if("55".equals(phoneNumber)) {
             Registration r = new Registration();
