@@ -17,12 +17,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
  * @author Willa aka Baba Imu on 6/20/19.
  */
-public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
+public class MediaServiceIntegrationTest extends BaseSecurityVerificationTest {
     @Autowired
     private MediaMetadataRepository metadataRepository;
 
@@ -32,7 +34,7 @@ public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
     private Resource testMediaFileResource;
 
     @Before
-    public void setup() {
+    public void setupTest() {
         testMediaFileResource = new ClassPathResource("media_dir/muzima.jpg");
     }
 
@@ -53,13 +55,12 @@ public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
         metadata.setExtension(".jpg");
         metadata.setDateReceived(LocalDateTime.now());
 
-        List<MediaMetadata> metadatas = metadataRepository.findAll();
-        assertTrue(metadatas.isEmpty());
+        assertNull(metadata.getId());
 
         mediaService.saveMedia(registration, metadata, testMediaFileResource.getInputStream());
 
         assertTrue("The media file should be saved", mediaFile.exists());
-        assertFalse("There should be at least one instance of media metadata", metadataRepository.findAll().isEmpty());
+        assertNotNull("Metadata should have been persisted", metadata.getId());
 
         // Remove the file.
         mediaFile.delete();
@@ -71,5 +72,74 @@ public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
         metadata.setServerFilePath("/this/path/does/not/exist");
 
         mediaService.saveMedia(new Registration(), metadata, testMediaFileResource.getInputStream());
+    }
+
+    @Test
+    public void verifyAndSaveMediaShouldDoExactlyThatBuddy() throws Exception {
+        MediaMetadata metadata = new MediaMetadata();
+        Registration registration = new Registration();
+        registration.setPublicKey(getBase64PublicKeyFromKeyPair());
+
+        // Get the directory
+        String randomFilename = UUID.randomUUID().toString();
+        String mediaPath = testMediaFileResource.getFile().getParentFile().getAbsolutePath() + "/" + randomFilename + ".jpg";
+
+        File mediaFile = new File(mediaPath);
+
+        assertFalse(mediaFile.exists());
+
+        metadata.setServerFilePath(mediaPath);
+        metadata.setExtension(".jpg");
+        metadata.setDateReceived(LocalDateTime.now());
+        metadata.setSize(200);
+        metadata.setSenderPhoneNumber("33445000");
+        metadata.setMediaType("image/jpg");
+
+        // Calculate signature.
+        String concat = metadata.getSenderPhoneNumber() + metadata.getSize() + metadata.getMediaType();
+        signatureAlgorithm.update(concat.getBytes());
+        byte[] signature = signatureAlgorithm.sign();
+
+
+        assertNull(metadata.getId());
+
+        metadata =  mediaService.verifyAndSaveMedia(registration, metadata, testMediaFileResource.getInputStream(), signature);
+
+        assertTrue("The media file should be saved", mediaFile.exists());
+        assertNotNull("Metadata should have an ID set", metadata.getId());
+
+        // Remove the file.
+        mediaFile.delete();
+    }
+
+    @Test(expected = MediaVerificationException.class)
+    public void verifyAndSaveMediaShouldThrow() throws Exception {
+        MediaMetadata metadata = new MediaMetadata();
+        Registration registration = new Registration();
+        registration.setPublicKey(getBase64PublicKeyFromKeyPair());
+
+        // Get the directory
+        String randomFilename = UUID.randomUUID().toString();
+        String mediaPath = testMediaFileResource.getFile().getParentFile().getAbsolutePath() + "/" + randomFilename + ".jpg";
+
+        File mediaFile = new File(mediaPath);
+
+        assertFalse(mediaFile.exists());
+
+        metadata.setServerFilePath(mediaPath);
+        metadata.setExtension(".jpg");
+        metadata.setDateReceived(LocalDateTime.now());
+        metadata.setSize(200);
+        metadata.setSenderPhoneNumber("33445000");
+        metadata.setMediaType("image/jpg");
+
+        // Calculate signature.
+        String concat = metadata.getSenderPhoneNumber() + metadata.getSize() + metadata.getMediaType();
+        signatureAlgorithm.update(concat.getBytes());
+        byte[] signature = signatureAlgorithm.sign();
+
+        // change phone number
+        metadata.setSenderPhoneNumber("55889000");
+        mediaService.verifyAndSaveMedia(registration, metadata, testMediaFileResource.getInputStream(), signature);
     }
  }
