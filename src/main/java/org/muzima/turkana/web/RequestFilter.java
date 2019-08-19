@@ -84,7 +84,6 @@ public class RequestFilter extends GenericFilterBean {
 
                         sendJSONError(httpResponse, 400, message, "/" + path);
                     } else {
-                        // TODO: Verify signature. For now simply add the registration as the request attribute.
                         httpRequest.setAttribute("registration", registration);
                         chain.doFilter(httpRequest, response);
                     }

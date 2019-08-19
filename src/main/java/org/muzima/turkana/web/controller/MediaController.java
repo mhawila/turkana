@@ -26,8 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 /**
  * @uthor Willa Mhawila<a.mhawila@gmail.com> on 6/21/19.
@@ -36,6 +38,7 @@ import java.util.Optional;
 @RequestMapping(MediaController.BASE_PATH)
 @Api(tags = "Media", description = "Images, Audios, Videos")
 public class MediaController {
+    private static Logger LOGGER = Logger.getLogger(MediaController.class.getName());
     public static final String BASE_PATH = "api/media";
 
     @Autowired
@@ -50,8 +53,17 @@ public class MediaController {
     @PostMapping(consumes = {"multipart/form-data", "application/json"})
     @ApiOperation(value = "Posting Media File plus metadata in one request", notes = "Requires to pass a message signature as a request parameter")
     public void post(@RequestPart(name = "metadata") MediaMetadata mediaMetadata, @RequestPart(name = "file") MultipartFile mediaFile,
-                       @RequestAttribute Registration registration) throws IOException {
-        mediaService.saveMedia(registration, mediaMetadata, mediaFile.getInputStream());
+                       @RequestAttribute Registration registration, @RequestParam String signature) throws IOException {
+        //Decode signature.
+        byte[] binarySignature = Base64.getUrlDecoder().decode(signature);
+        try {
+            mediaService.verifyAndSaveMedia(registration, mediaMetadata, mediaFile.getInputStream(), binarySignature);
+        } catch (Exception e) {
+            String errorMessage = "Something went wrong while verifying signature, data not backed up";
+            LOGGER.warning(errorMessage);
+            e.printStackTrace();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage, e);
+        }
     }
 
     @GetMapping(path = "/{id}", produces = { "application/json" })
