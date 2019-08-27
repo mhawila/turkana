@@ -6,10 +6,10 @@ import org.muzima.TurkanaApplication;
 import org.muzima.turkana.H2TestConfig;
 import org.muzima.turkana.model.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test..SpringBootTest;
+import org.springframework.test..ActiveProfiles;
+import org.springframework.test..jdbc.Sql;
+import org.springframework.test..junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

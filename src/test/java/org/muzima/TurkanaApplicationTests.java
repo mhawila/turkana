@@ -16,7 +16,7 @@ import org.muzima.turkana.service.MediaServiceIntegrationTest;
 public class TurkanaApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	public void Loads() {
 
 	}
 
