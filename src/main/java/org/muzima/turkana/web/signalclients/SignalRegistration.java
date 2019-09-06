@@ -69,8 +69,6 @@ public class SignalRegistration {
 
     protected void setMasterSecret(MasterSecret masterSecret) {
         this.masterSecret = masterSecret;
-//        Intent bindIntent = new Intent(this, KeyCachingService.class);
-//        startService(bindIntent);
     }
 
     public void onServiceConnected() {

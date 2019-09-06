@@ -1,5 +1,7 @@
 package org.muzima.turkana.web.signalclients;
 
+import org.muzima.turkana.data.TurkanaKeyStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.IdentityKeyPair;
@@ -10,6 +12,7 @@ import org.whispersystems.libsignal.ecc.ECPrivateKey;
 import org.whispersystems.signalservice.internal.util.Base64;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import static org.apache.http.client.methods.RequestBuilder.delete;
 
@@ -21,9 +24,12 @@ public class IdentityKeyUtil {
 
     private static final String IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF = "pref_identity_public_curve25519";
     private static final String IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF = "pref_identity_private_curve25519";
-
+    private static final HashMap<String,String> KEY_PREF_STORE = new HashMap<>();
     private static final String IDENTITY_PUBLIC_KEY_PREF = "pref_identity_public_v3";
     private static final String IDENTITY_PRIVATE_KEY_PREF = "pref_identity_private_v3";
+
+    @Autowired
+    TurkanaKeyStore turkanaKeyStore;
 
     public static boolean hasIdentityKey() {
         return true;
@@ -82,15 +88,11 @@ public class IdentityKeyUtil {
     }
 
     private static void save(String key, String value) {
-//        preferencesEditor.putString(key, value);
-//        if (!preferencesEditor.commit())
-//            throw new AssertionError("failed to save identity key/value to shared preferences");
+        KEY_PREF_STORE.put(key,value);
     }
 
     private static String retrieve(String key) {
-//        SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.PREFERENCES_NAME, 0);
-//        return preferences.getString(key, null);
-        return "";
+        return KEY_PREF_STORE.get(key);
     }
 
     private static IdentityKeyPair getLegacyIdentityKeyPair(MasterSecret masterSecret) {
