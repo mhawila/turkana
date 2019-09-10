@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Willa aka Baba Imu on 5/17/19.
@@ -19,7 +19,8 @@ import javax.persistence.Persistence;
 
 @Repository
 public class RegistrationQueryImpl implements RegistrationQuery {
-    @Persistence
+
+    @PersistenceContext
     private EntityManager entityManager;
 
 
