@@ -40,7 +40,7 @@ public class SignalMessageReceiver {
 
     public static final String SIGNAL_SERVICE_URL = "https://textsecure-service.whispersystems.org";
     public static final String USERNAME = "+254706906138";
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "whisper";
 
     private SignalServiceAccountManager accountManager;
 
@@ -68,7 +68,7 @@ public class SignalMessageReceiver {
                 InputStream inputStream = null;
                 try {
                     inputStream = new FileInputStream(
-                        new File(getClass().getClassLoader().getResource("signal_keystore.jks").getFile()
+                        new File(getClass().getClassLoader().getResource("whisper.store").getFile()
                     ));
 
                     return inputStream;
