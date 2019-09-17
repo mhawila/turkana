@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Provides Spring context and database initialization for integration tests.
+ * Provides Spring  and database initialization for integration tests.
  * @author  Willa aka Baba Imu on 6/20/19.
  */
 

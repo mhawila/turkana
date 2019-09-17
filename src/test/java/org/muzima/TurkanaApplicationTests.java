@@ -21,7 +21,7 @@ import org.muzima.turkana.utils.CryptoUtilsTest;
 public class TurkanaApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	public void Loads() {
 
 	}
 
