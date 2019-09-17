@@ -1,7 +1,13 @@
 package org.muzima.turkana.web.controller;
 
-import org.muzima.turkana.data.TurkanaKeyStore;
+import org.muzima.turkana.data.TextSecurePreKeyStore;
+import org.muzima.turkana.service.OneTimePrekeyService;
+import org.muzima.turkana.service.SignedPrekeyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,8 +25,7 @@ import org.whispersystems.signalservice.internal.configuration.SignalServiceConf
 import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,37 +35,60 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/signal")
 public class SignalMessageReceiver {
-    @Autowired
-    private TurkanaKeyStore store;
 
-    private static final SignalProtocolAddress sProtocolAddress = new SignalProtocolAddress("mbs",1);
+    Logger logger = LoggerFactory.getLogger(SignalMessageReceiver.class);
+
+    @Autowired
+    private TextSecurePreKeyStore store;
+
+    @Autowired
+    private Environment environment;
+
+    private static final SignalProtocolAddress sProtocolAddress = new SignalProtocolAddress("mbs", 1);
     private static final int SIGNED_PREKEY_ID = 1000;
 
     public static final String SIGNAL_SERVICE_URL = "https://textsecure-service.whispersystems.org";
-    public static final String USERNAME = "+255689383495";
-    private static final String PASSWORD = "password";
+    private static final String PASSWORD = "whisper";
 
     private SignalServiceAccountManager accountManager;
 
+    @Value("${turkana.phonenumber}")
+    public String USERNAME;
+
     @PostConstruct
     public void setupSignal() throws InvalidKeyException {
+
+        if (USERNAME == null || USERNAME.isEmpty())
+            throw new AssertionError("Unable to register server, default phone number not found : PHONE " + USERNAME);
+
         IdentityKeyPair identityKeyPair = KeyHelper.generateIdentityKeyPair();
-        List<PreKeyRecord> oneTimePrekeys = KeyHelper.generatePreKeys(1,100);
+        List<PreKeyRecord> oneTimePrekeys = KeyHelper.generatePreKeys(1, 100);
         SignedPreKeyRecord signedPreKeyRecord = KeyHelper.generateSignedPreKey(identityKeyPair, SIGNED_PREKEY_ID);
 
         // Store this stuff.
         store.saveIdentity(sProtocolAddress, identityKeyPair.getPublicKey());
-        for(int i=0; i < oneTimePrekeys.size() ; i++ ) {
+        for (int i = 0; i < oneTimePrekeys.size(); i++) {
             store.storePreKey(i + 1, oneTimePrekeys.get(i));
         }
 
-//        store.storeSignedPreKey(SIGNED_PREKEY_ID, signedPreKeyRecord);
+        store.storeSignedPreKey(SIGNED_PREKEY_ID, signedPreKeyRecord);
 
         // Create account manager
         SignalServiceUrl url = new SignalServiceUrl(SIGNAL_SERVICE_URL, new TrustStore() {
             @Override
             public InputStream getKeyStoreInputStream() {
-                return null;
+                InputStream inputStream = null;
+                try {
+                    inputStream = new FileInputStream(
+                        new File(getClass().getClassLoader().getResource("whisper.store").getFile()
+                        ));
+
+                    return inputStream;
+
+                } catch (FileNotFoundException e) {
+                    throw new AssertionError("Keystore file not found.");
+                }
+
             }
 
             @Override
@@ -69,17 +97,26 @@ public class SignalMessageReceiver {
             }
         });
 
-        SignalServiceConfiguration configuration = new SignalServiceConfiguration(new SignalServiceUrl[] { url },new SignalCdnUrl[0]);
+        SignalServiceConfiguration configuration = new SignalServiceConfiguration(
+            new SignalServiceUrl[]{url},
+            new SignalCdnUrl[0]);
+
         accountManager = new SignalServiceAccountManager(configuration, USERNAME, PASSWORD, "java-app");
     }
 
     @PostMapping(path = "/register")
     public void register() throws IOException {
+        logger.info("Register MBS server on signal : Phone Number : " + USERNAME);
+
+        store.purgeKeyStore();
+
         accountManager.requestSmsVerificationCode();
     }
 
     @PostMapping(path = "/verify", consumes = "application/json")
     public void verify(@RequestParam String code) throws IOException {
-        accountManager.verifyAccountWithCode(code, UUID.randomUUID().toString(), store.getLocalRegistrationId(), false, "willa");
+        logger.info("Verify Signal phone number | Code " + code);
+
+        accountManager.verifyAccountWithCode(code, UUID.randomUUID().toString(), store.getLocalRegistrationId(), false, "mbspin");
     }
 }
