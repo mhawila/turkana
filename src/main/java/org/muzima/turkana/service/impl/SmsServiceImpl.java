@@ -20,13 +20,13 @@ public class SmsServiceImpl implements SmsService {
     SmsRepository smsRepository;
 
     @Override
-    public void saveSms(Sms sms) {
-        smsRepository.save(sms);
+    public Sms saveSms(Sms sms) {
+        return smsRepository.save(sms);
     }
 
     @Override
-    public void saveAllSms(List<Sms> smsList) {
-        smsRepository.saveAll(smsList);
+    public List<Sms> saveAllSms(List<Sms> smsList) {
+        return smsRepository.saveAll(smsList);
     }
 
     @Override
