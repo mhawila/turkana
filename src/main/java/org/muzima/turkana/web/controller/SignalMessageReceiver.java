@@ -1,8 +1,13 @@
 package org.muzima.turkana.web.controller;
 
-import org.muzima.turkana.data.TurkanaKeyStore;
-import org.spongycastle.jce.provider.BouncyCastleProvider;
+import org.muzima.turkana.data.TextSecurePreKeyStore;
+import org.muzima.turkana.service.OneTimePrekeyService;
+import org.muzima.turkana.service.SignedPrekeyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +26,6 @@ import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.security.Provider;
-import java.security.Security;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,22 +35,31 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/signal")
 public class SignalMessageReceiver {
+
+    Logger logger = LoggerFactory.getLogger(SignalMessageReceiver.class);
+
     @Autowired
-    private TurkanaKeyStore store;
+    private TextSecurePreKeyStore store;
+
+    @Autowired
+    private Environment environment;
 
     private static final SignalProtocolAddress sProtocolAddress = new SignalProtocolAddress("mbs", 1);
     private static final int SIGNED_PREKEY_ID = 1000;
 
     public static final String SIGNAL_SERVICE_URL = "https://textsecure-service.whispersystems.org";
-    public static final String USERNAME = "+254706906138";
     private static final String PASSWORD = "whisper";
 
     private SignalServiceAccountManager accountManager;
 
+    @Value("${turkana.phonenumber}")
+    public String USERNAME;
+
     @PostConstruct
     public void setupSignal() throws InvalidKeyException {
 
-        installJCAProvider();
+        if (USERNAME == null || USERNAME.isEmpty())
+            throw new AssertionError("Unable to register server, default phone number not found : PHONE " + USERNAME);
 
         IdentityKeyPair identityKeyPair = KeyHelper.generateIdentityKeyPair();
         List<PreKeyRecord> oneTimePrekeys = KeyHelper.generatePreKeys(1, 100);
@@ -59,7 +71,7 @@ public class SignalMessageReceiver {
             store.storePreKey(i + 1, oneTimePrekeys.get(i));
         }
 
-//        store.storeSignedPreKey(SIGNED_PREKEY_ID, signedPreKeyRecord);
+        store.storeSignedPreKey(SIGNED_PREKEY_ID, signedPreKeyRecord);
 
         // Create account manager
         SignalServiceUrl url = new SignalServiceUrl(SIGNAL_SERVICE_URL, new TrustStore() {
@@ -69,7 +81,7 @@ public class SignalMessageReceiver {
                 try {
                     inputStream = new FileInputStream(
                         new File(getClass().getClassLoader().getResource("whisper.store").getFile()
-                    ));
+                        ));
 
                     return inputStream;
 
@@ -85,32 +97,26 @@ public class SignalMessageReceiver {
             }
         });
 
-        SignalServiceConfiguration configuration = new SignalServiceConfiguration(new SignalServiceUrl[]{url}, new SignalCdnUrl[0]);
+        SignalServiceConfiguration configuration = new SignalServiceConfiguration(
+            new SignalServiceUrl[]{url},
+            new SignalCdnUrl[0]);
+
         accountManager = new SignalServiceAccountManager(configuration, USERNAME, PASSWORD, "java-app");
-    }
-
-    private void installJCAProvider() {
-        BouncyCastleProvider bouncyCastleProvider = new BouncyCastleProvider();
-
-     //   System.err.println("Bouncy Catle Provider Version " + bouncyCastleProvider.getVersion() + " \nName " + bouncyCastleProvider.getName() + " | \n" + bouncyCastleProvider.getInfo());
-
-
-       // Security.addProvider(bouncyCastleProvider);
-
-        Provider[] providers = Security.getProviders();
-
-        for (Provider provider : providers) {
-            System.err.println("Installed security providers" + provider.getInfo() + "\n");
-        }
     }
 
     @PostMapping(path = "/register")
     public void register() throws IOException {
+        logger.info("Register MBS server on signal : Phone Number : " + USERNAME);
+
+        store.purgeKeyStore();
+
         accountManager.requestSmsVerificationCode();
     }
 
     @PostMapping(path = "/verify", consumes = "application/json")
     public void verify(@RequestParam String code) throws IOException {
-        accountManager.verifyAccountWithCode(code, UUID.randomUUID().toString(), store.getLocalRegistrationId(), false, "willa");
+        logger.info("Verify Signal phone number | Code " + code);
+
+        accountManager.verifyAccountWithCode(code, UUID.randomUUID().toString(), store.getLocalRegistrationId(), false, "mbspin");
     }
 }

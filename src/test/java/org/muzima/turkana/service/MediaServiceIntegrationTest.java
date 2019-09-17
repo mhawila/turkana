@@ -41,7 +41,6 @@ public class MediaServiceIntegrationTest extends AbstractIntegrationTest {
         MediaMetadata metadata = new MediaMetadata();
         Registration registration = new Registration();
 
-        // Get the directory
         String randomFilename = UUID.randomUUID().toString();
         String mediaPath = testMediaFileResource.getFile().getParentFile().getAbsolutePath() + "/" + randomFilename + ".jpg";
 

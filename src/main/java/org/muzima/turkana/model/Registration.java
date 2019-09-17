@@ -26,6 +26,9 @@ public class Registration {
     @Column(name = "date_registered", nullable = false)
     private LocalDateTime dateRegistered;
 
+    @Column(name = "status")
+    private String status;
+
     @Column
     private Boolean retired;
 
