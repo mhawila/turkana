@@ -9,5 +9,4 @@ public class TurkanaApplication {
     public static void main(String[] args) {
         SpringApplication.run(TurkanaApplication.class, args);
     }
-
 }
