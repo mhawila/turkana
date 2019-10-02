@@ -27,9 +27,9 @@ public class PushNotificationService {
     }
 
     @Scheduled(initialDelay = 60000, fixedDelay = 60000)
-    public void sendSamplePushNotification() {
+    public void sendPushNotification() {
         try {
-            fcmService.sendMessageWithoutData(getSamplePushNotificationRequest());
+            fcmService.sendMessageWithoutData(getPushNotificationRequest());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -68,7 +68,7 @@ public class PushNotificationService {
         return pushData;
     }
 
-    private PushNotificationRequest getSamplePushNotificationRequest() {
+    private PushNotificationRequest getPushNotificationRequest() {
         PushNotificationRequest request = new PushNotificationRequest(defaults.get("title"),
             defaults.get("message"),
             defaults.get("topic"));

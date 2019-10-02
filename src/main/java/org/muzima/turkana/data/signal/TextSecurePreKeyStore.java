@@ -1,7 +1,5 @@
-package org.muzima.turkana.data;
+package org.muzima.turkana.data.signal;
 
-import org.muzima.turkana.model.Identity;
-import org.muzima.turkana.model.SignedPreKey;
 import org.muzima.turkana.service.OneTimePrekeyService;
 import org.muzima.turkana.service.SignedPrekeyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import org.whispersystems.libsignal.state.SignedPreKeyRecord;
 import org.whispersystems.libsignal.state.SignedPreKeyStore;
 
 import java.util.List;
-import java.util.Random;
 
 @Component
 public class TextSecurePreKeyStore implements PreKeyStore, SignedPreKeyStore {

@@ -1,6 +1,6 @@
 package org.muzima.turkana.service.impl;
 
-import org.muzima.turkana.data.SignedPrekeyRepository;
+import org.muzima.turkana.data.signal.SignedPrekeyRepository;
 import org.muzima.turkana.model.SignedPreKey;
 import org.muzima.turkana.service.SignedPrekeyService;
 import org.muzima.turkana.utils.Base64;

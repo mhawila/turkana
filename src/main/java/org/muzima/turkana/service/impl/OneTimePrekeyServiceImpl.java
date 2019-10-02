@@ -1,6 +1,6 @@
 package org.muzima.turkana.service.impl;
 
-import org.muzima.turkana.data.OneTimePrekeyRepository;
+import org.muzima.turkana.data.signal.OneTimePrekeyRepository;
 import org.muzima.turkana.model.OneTimePreKey;
 import org.muzima.turkana.service.OneTimePrekeyService;
 import org.muzima.turkana.utils.Base64;

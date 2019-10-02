@@ -1,4 +1,4 @@
-package org.muzima.turkana.data;
+package org.muzima.turkana.data.signal;
 
 import org.muzima.turkana.model.SignedPreKey;
 import org.springframework.data.jpa.repository.JpaRepository;

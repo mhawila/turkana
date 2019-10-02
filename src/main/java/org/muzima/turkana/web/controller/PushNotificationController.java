@@ -26,8 +26,8 @@ public class PushNotificationController {
     }
 
     @GetMapping("/notification")
-    public ResponseEntity sendSampleNotification() {
-        pushNotificationService.sendSamplePushNotification();
+    public ResponseEntity sendNotification() {
+        pushNotificationService.sendPushNotification();
         return new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
     }
 }

@@ -1,8 +1,6 @@
 package org.muzima.turkana.web.controller;
 
-import org.muzima.turkana.data.TextSecurePreKeyStore;
-import org.muzima.turkana.service.OneTimePrekeyService;
-import org.muzima.turkana.service.SignedPrekeyService;
+import org.muzima.turkana.data.signal.TextSecurePreKeyStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

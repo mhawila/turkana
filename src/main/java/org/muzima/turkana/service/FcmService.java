@@ -5,6 +5,7 @@ import org.muzima.turkana.model.NotificationParameter;
 import org.muzima.turkana.model.PushNotificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
 
 import java.time.Duration;
 import java.util.Map;
@@ -12,20 +13,22 @@ import java.util.concurrent.ExecutionException;
 
 public class FcmService {
 
+    SignalServiceMessageReceiver receiver;
+
     private Logger logger = LoggerFactory.getLogger(FcmService.class);
 
     public void sendMessage(Map<String, String> data, PushNotificationRequest request)
         throws InterruptedException, ExecutionException {
         Message message = getPreconfiguredMessageWithData(data, request);
         String response = sendAndGetResponse(message);
-        logger.info("Sent message with data. Topic: " + request.getTopic() + ", " + response);
+        logger.info("Sent message with data. " + request.getTopic() + ", " + response);
     }
 
     public void sendMessageWithoutData(PushNotificationRequest request)
         throws InterruptedException, ExecutionException {
         Message message = getPreconfiguredMessageWithoutData(request);
         String response = sendAndGetResponse(message);
-        logger.info("Sent message without data. Topic: " + request.getTopic() + ", " + response);
+        logger.info("Sent message without data. " + request.getTopic() + ", " + response);
     }
 
 
