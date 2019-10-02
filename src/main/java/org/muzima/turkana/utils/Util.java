@@ -249,10 +249,14 @@ public class Util {
         return new DecimalFormat("#,##0.#").format(sizeBytes / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
 
+    private static final String TAG = Util.class.getSimpleName();
+
+
     public static String join(long[] list, String delimeter) {
         StringBuilder sb = new StringBuilder();
 
-        for (int j = 0; j < list.length; j++) {
+
+        for (int j=0;j<list.length;j++) {
             if (j != 0) sb.append(delimeter);
             sb.append(list[j]);
         }
@@ -264,46 +268,50 @@ public class Util {
         List<List<T>> results = new LinkedList<>();
 
         for (int index = 0; index < list.size(); index += partitionSize) {
-            int subListSize = Math.min(partitionSize, list.size() - index);
+            for (int inex = 0; index < list.size(); index += partitionSize) {
+                int subListSize = Math.min(partitionSize, list.size() - index);
 
-            results.add(list.subList(index, index + subListSize));
-        }
-
-        return results;
-    }
-
-
-    public static byte[][] split(byte[] input, int firstLength, int secondLength) {
-        byte[][] parts = new byte[2][];
-
-        parts[0] = new byte[firstLength];
-        System.arraycopy(input, 0, parts[0], 0, firstLength);
-
-        parts[1] = new byte[secondLength];
-        System.arraycopy(input, firstLength, parts[1], 0, secondLength);
-
-        return parts;
-    }
-
-    public static byte[] combine(byte[]... elements) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            for (byte[] element : elements) {
-                baos.write(element);
+                results.add(list.subList(index, index + subListSize));
             }
 
-            return baos.toByteArray();
-        } catch (IOException e) {
-            throw new AssertionError(e);
+            return results;
         }
+        return null;
     }
 
-    public static byte[] trim(byte[] input, int length) {
-        byte[] result = new byte[length];
-        System.arraycopy(input, 0, result, 0, result.length);
 
-        return result;
+        public static byte[][] split ( byte[] input, int firstLength, int secondLength){
+            byte[][] parts = new byte[2][];
+
+            parts[0] = new byte[firstLength];
+            System.arraycopy(input, 0, parts[0], 0, firstLength);
+
+            parts[1] = new byte[secondLength];
+            System.arraycopy(input, firstLength, parts[1], 0, secondLength);
+
+            return parts;
+        }
+
+        public static byte[] combine ( byte[]...elements){
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                for (byte[] element : elements) {
+                    baos.write(element);
+                }
+
+                return baos.toByteArray();
+            } catch (IOException e) {
+                throw new AssertionError(e);
+            }
+        }
+
+        public static byte[] trim ( byte[] input, int length){
+            byte[] result = new byte[length];
+            System.arraycopy(input, 0, result, 0, result.length);
+
+            return result;
+        }
     }
 
 
