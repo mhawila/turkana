@@ -103,29 +103,26 @@
             <version>1.0.0</version>
         </dependency>
         <dependency>
-<<<<<<< HEAD
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
             <version>6.8.1</version>
-=======
+        </dependency>
+        <dependency>
             <groupId>com.google.gcm</groupId>
             <artifactId>gcm-server</artifactId>
             <version>1.0.0</version>
->>>>>>> 42d2c8fc54a739da0ab4ff7b4f1ffafd5f5f290c
         </dependency>
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
-<<<<<<< HEAD
+
         <dependency>
             <groupId>org.greenrobot</groupId>
             <artifactId>eventbus</artifactId>
             <version>3.0.0</version>
         </dependency>
-=======
->>>>>>> 42d2c8fc54a739da0ab4ff7b4f1ffafd5f5f290c
     </dependencies>
 
     <build>
