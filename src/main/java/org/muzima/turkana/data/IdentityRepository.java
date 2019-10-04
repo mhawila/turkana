@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import org.whispersystems.libsignal.IdentityKey;
 import org.whispersystems.libsignal.util.guava.Optional;
 
-@Repository
 public interface IdentityRepository extends JpaRepository<Identity,Long> {
     Optional<Identity> getIdentity(String signalAddress);
 
