@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.whispersystems.libsignal.util.guava.Optional;
 
+import java.net.MalformedURLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
@@ -54,13 +55,13 @@ public class Recipient implements RecipientModifiedListener {
     private UnidentifiedAccessMode unidentifiedAccessMode = UnidentifiedAccessMode.DISABLED;
 
     @SuppressWarnings("ConstantConditions")
-    public static Recipient from(String address, boolean asynchronous) {
+    public static Recipient from(String address, boolean asynchronous) throws MalformedURLException {
         if (address == null) throw new AssertionError(address);
         return provider.getRecipient(address, org.whispersystems.libsignal.util.guava.Optional.absent(), asynchronous);
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static Recipient from(String address, org.whispersystems.libsignal.util.guava.Optional<RecipientSettings> settings, boolean asynchronous) {
+    public static Recipient from(String address, org.whispersystems.libsignal.util.guava.Optional<RecipientSettings> settings, boolean asynchronous) throws MalformedURLException {
         if (address == null) throw new AssertionError(address);
         return provider.getRecipient(address, settings, asynchronous);
     }

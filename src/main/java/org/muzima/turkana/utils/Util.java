@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.DecimalFormat;
@@ -25,6 +26,12 @@ public class Util {
         List<T> result = new LinkedList<>();
         Collections.addAll(result, elements);
         return result;
+    }
+
+    public static @Nullable
+    Uri uri(@Nullable String uri) throws MalformedURLException {
+        if (uri == null) return null;
+        else return new Uri(uri);
     }
 
     public static String join(String[] list, String delimiter) {
@@ -64,7 +71,7 @@ public class Util {
         return collection == null || collection.isEmpty();
     }
 
-    public static <K, V> V getOrDefault( Map<K, V> map, K key, V defaultValue) {
+    public static <K, V> V getOrDefault(Map<K, V> map, K key, V defaultValue) {
         return map.containsKey(key) ? map.get(key) : defaultValue;
     }
 
@@ -77,7 +84,7 @@ public class Util {
         return "";
     }
 
-    public static <E> List<List<E>> chunk( List<E> list, int chunkSize) {
+    public static <E> List<List<E>> chunk(List<E> list, int chunkSize) {
         List<List<E>> chunks = new ArrayList<>(list.size() / chunkSize);
 
         for (int i = 0; i < list.size(); i += chunkSize) {
@@ -256,7 +263,7 @@ public class Util {
         StringBuilder sb = new StringBuilder();
 
 
-        for (int j=0;j<list.length;j++) {
+        for (int j = 0; j < list.length; j++) {
             if (j != 0) sb.append(delimeter);
             sb.append(list[j]);
         }
@@ -280,39 +287,36 @@ public class Util {
     }
 
 
-        public static byte[][] split ( byte[] input, int firstLength, int secondLength){
-            byte[][] parts = new byte[2][];
+    public static byte[][] split(byte[] input, int firstLength, int secondLength) {
+        byte[][] parts = new byte[2][];
 
-            parts[0] = new byte[firstLength];
-            System.arraycopy(input, 0, parts[0], 0, firstLength);
+        parts[0] = new byte[firstLength];
+        System.arraycopy(input, 0, parts[0], 0, firstLength);
 
-            parts[1] = new byte[secondLength];
-            System.arraycopy(input, firstLength, parts[1], 0, secondLength);
+        parts[1] = new byte[secondLength];
+        System.arraycopy(input, firstLength, parts[1], 0, secondLength);
 
-            return parts;
-        }
+        return parts;
+    }
 
-        public static byte[] combine ( byte[]...elements){
-            try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public static byte[] combine(byte[]... elements) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                for (byte[] element : elements) {
-                    baos.write(element);
-                }
-
-                return baos.toByteArray();
-            } catch (IOException e) {
-                throw new AssertionError(e);
+            for (byte[] element : elements) {
+                baos.write(element);
             }
-        }
 
-        public static byte[] trim ( byte[] input, int length){
-            byte[] result = new byte[length];
-            System.arraycopy(input, 0, result, 0, result.length);
-
-            return result;
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 
+    public static byte[] trim(byte[] input, int length) {
+        byte[] result = new byte[length];
+        System.arraycopy(input, 0, result, 0, result.length);
 
+        return result;
+    }
 }

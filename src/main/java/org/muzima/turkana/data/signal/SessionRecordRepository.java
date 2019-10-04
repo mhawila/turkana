@@ -12,4 +12,10 @@ public interface SessionRecordRepository extends JpaRepository<SignalSession,Lon
     List<Integer> getSubDevices(String name);
 
     List<SessionRecord> getAllFor(String name);
+
+    org.whispersystems.libsignal.state.SessionRecord load(String name);
+
+    Object store(String name);
+
+    void delete(String name);
 }

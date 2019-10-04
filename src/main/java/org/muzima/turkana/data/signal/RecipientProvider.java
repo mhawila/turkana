@@ -2,18 +2,27 @@ package org.muzima.turkana.data.signal;
 
 import com.sun.jndi.toolkit.url.Uri;
 import org.apache.http.util.TextUtils;
+import org.muzima.turkana.async.ListenableFutureTask;
 import org.muzima.turkana.model.Recipient;
 import org.muzima.turkana.utils.Util;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.concurrent.ListenableFutureTask;
 import org.whispersystems.libsignal.util.guava.Optional;
 
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+
+/**
+ * A utility class that facilates persistence and creation
+ * of {@link org.muzima.turkana.model.Recipient}.
+ * This class facilitates management of Recipient information.
+ *
+ * @author Samuel Owino
+ */
 
 public class RecipientProvider {
 
@@ -27,11 +36,15 @@ public class RecipientProvider {
     private static final ExecutorService asyncRecipientResolver = Util.newSingleThreadedLifoExecutor();
 
     private static final Map<String, RecipientDetails> STATIC_DETAILS = new HashMap<String, RecipientDetails>() {{
-        put("262966", new RecipientDetails("Amazon", null, false, false, null, null));
+        try {
+            put("262966", new RecipientDetails("Amazon", null, false, false, null, null));
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }};
 
 
-    public Recipient getRecipient(String address, Optional<RecipientSettings> settings, boolean asynchronous) {
+    public Recipient getRecipient(String address, Optional<RecipientSettings> settings, boolean asynchronous) throws MalformedURLException {
         Recipient cachedRecipient = recipientCache.get(address);
 
         if (cachedRecipient != null && (asynchronous || !cachedRecipient.isResolving()) && ((!settings.isPresent()) || !cachedRecipient.isResolving() || cachedRecipient.getName() != null)) {
@@ -55,7 +68,7 @@ public class RecipientProvider {
         return Optional.fromNullable(recipientCache.get(address));
     }
 
-    private Optional<RecipientDetails> createPrefetchedRecipientDetails(String address, Optional<RecipientSettings> settings) {
+    private Optional<RecipientDetails> createPrefetchedRecipientDetails(String address, Optional<RecipientSettings> settings) throws MalformedURLException {
         boolean isLocalNumber = address.equals(LOCAL_PHONE_NUMBER);
         return Optional.of(new RecipientDetails(null, null, !TextUtils.isEmpty(settings.get().getSystemDisplayName()), isLocalNumber, settings.get(), null));
     }
@@ -68,11 +81,11 @@ public class RecipientProvider {
         return future;
     }
 
-    private RecipientDetails getRecipientDetailsSync(String address, Optional<RecipientSettings> settings,boolean nestedAsynchronous) {
+    private RecipientDetails getRecipientDetailsSync(String address, Optional<RecipientSettings> settings,boolean nestedAsynchronous) throws MalformedURLException {
         return getIndividualRecipientDetails(address, settings);
     }
 
-    private RecipientDetails getIndividualRecipientDetails(String address, Optional<RecipientSettings> settings) {
+    private RecipientDetails getIndividualRecipientDetails(String address, Optional<RecipientSettings> settings) throws MalformedURLException {
 
         if (!settings.isPresent() && STATIC_DETAILS.containsKey(address)) {
             return STATIC_DETAILS.get(address);
@@ -116,7 +129,7 @@ public class RecipientProvider {
 
         public RecipientDetails(String name, Long groupAvatarId,
                          boolean systemContact, boolean isLocalNumber, RecipientSettings settings,
-                         List<Recipient> participants) {
+                         List<Recipient> participants) throws MalformedURLException {
             this.groupAvatarId = groupAvatarId;
             this.systemContactPhoto = settings != null ? Util.uri(settings.getSystemContactPhotoUri()) : null;
             this.customLabel = settings != null ? settings.getSystemPhoneLabel() : null;

@@ -7,6 +7,23 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 
+/**
+ * An a custom implementation of {@link java.util.concurrent.Future }
+ *
+ * A Future represents the result of an asynchronous computation.
+ * Methods are provided to check if the computation is complete, to wait for its completion,
+ * and to retrieve the result of the computation.
+ *
+ * The result can only be retrieved using method get when the computation has completed,
+ * blocking if necessary until it is ready. Cancellation is performed by the cancel method.
+ * Additional methods are provided to determine if the task completed normally or was cancelled.
+ * Once a computation has completed, the computation cannot be cancelled.
+ * If you would like to use a Future for the sake of cancellability but not provide a usable result,
+ * you can declare types of the form Future<?> and return null as a result of the underlying task.
+ *
+ * @param <V>
+ */
+
 public class ListenableFutureTask<V> extends FutureTask<V> {
 
     private final List<FutureTaskListener<V>> listeners = new LinkedList<>();
@@ -23,9 +40,9 @@ public class ListenableFutureTask<V> extends FutureTask<V> {
         this(callable, identifier, null);
     }
 
-    public ListenableFutureTask(Callable<V> callable,Object identifier,Executor callbackExecutor) {
+    public ListenableFutureTask(Callable<V> callable, Object identifier, Executor callbackExecutor) {
         super(callable);
-        this.identifier       = identifier;
+        this.identifier = identifier;
         this.callbackExecutor = callbackExecutor;
     }
 
@@ -34,14 +51,14 @@ public class ListenableFutureTask<V> extends FutureTask<V> {
         this(result, null);
     }
 
-    public ListenableFutureTask(final V result,Object identifier) {
+    public ListenableFutureTask(final V result, Object identifier) {
         super(new Callable<V>() {
             @Override
             public V call() throws Exception {
                 return result;
             }
         });
-        this.identifier       = identifier;
+        this.identifier = identifier;
         this.callbackExecutor = null;
         this.run();
     }
@@ -74,7 +91,7 @@ public class ListenableFutureTask<V> extends FutureTask<V> {
         };
 
         if (callbackExecutor == null) callbackRunnable.run();
-        else                          callbackExecutor.execute(callbackRunnable);
+        else callbackExecutor.execute(callbackRunnable);
     }
 
     private void callback(FutureTaskListener<V> listener) {
@@ -101,6 +118,6 @@ public class ListenableFutureTask<V> extends FutureTask<V> {
     @Override
     public int hashCode() {
         if (identifier != null) return identifier.hashCode();
-        else                    return super.hashCode();
+        else return super.hashCode();
     }
 }

@@ -5,6 +5,8 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.state.SessionStore;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
+import java.io.IOException;
+
 public class SessionUtil {
 
     public static boolean hasSession(String address) {
@@ -16,11 +18,19 @@ public class SessionUtil {
 
     public static void archiveSiblingSessions(SignalProtocolAddress address) {
         TextSecureSessionStore sessionStore = new TextSecureSessionStore();
-        sessionStore.archiveSiblingSessions(address);
+        try {
+            sessionStore.archiveSiblingSessions(address);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void archiveAllSessions() {
-        new TextSecureSessionStore().archiveAllSessions();
+        try {
+            new TextSecureSessionStore().archiveAllSessions();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

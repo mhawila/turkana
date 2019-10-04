@@ -14,6 +14,9 @@ public class Session {
         this.record = record;
     }
 
+    public Session() {
+    }
+
     public String getId() {
         return id;
     }

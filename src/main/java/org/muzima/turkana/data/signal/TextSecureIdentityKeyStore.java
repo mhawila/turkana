@@ -18,6 +18,7 @@ import org.whispersystems.libsignal.SignalProtocolAddress;
 import org.whispersystems.libsignal.state.IdentityKeyStore;
 import org.whispersystems.libsignal.util.guava.Optional;
 
+import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -49,7 +50,7 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
         return Integer.parseInt(LOCAL_PHONE_NUMBER);
     }
 
-    public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey, boolean nonBlockingApproval) {
+    public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey, boolean nonBlockingApproval) throws MalformedURLException {
         synchronized (LOCK) {
             String signalAddress = LOCAL_PHONE_NUMBER;
             Optional<Identity> identityRecord = identityRepository.getIdentity(signalAddress);
@@ -84,7 +85,12 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
     @Override
     public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey) {
-        return saveIdentity(address, identityKey, false);
+        try {
+            return saveIdentity(address, identityKey, false);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 
     @Override

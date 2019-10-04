@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.muzima.turkana.data.RegistrationRepository;
 import org.muzima.turkana.model.Registration;
+import org.muzima.turkana.service.RetrieveMessagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,11 @@ public class RegistrationController {
 
     @Autowired
     private RegistrationRepository regRepo;
+
+    @PostConstruct
+    public void scheduleRegistrationMessageService(){
+        RetrieveMessagesService.scheduleMessageRetrieval();
+    }
 
     @GetMapping(path = { "", "/{phoneNumber}" }, produces = {"application/json"})
     @ApiOperation("Returns a list of registrations or only those belonging to path variable {phoneNumber} if provided")

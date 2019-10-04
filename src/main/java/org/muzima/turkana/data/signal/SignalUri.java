@@ -4,20 +4,10 @@ import com.sun.jndi.toolkit.url.Uri;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.RandomAccess;
-import java.util.Set;
+import java.util.*;
 
 import static sun.net.www.ParseUtil.decode;
 
@@ -109,12 +99,6 @@ public abstract class SignalUri implements Comparable<SignalUri> {
     private static final String NOT_CACHED = new String("NOT CACHED");
 
     /**
-     * The empty URI, equivalent to "".
-     */
-    public static final SignalUri EMPTY = new HierarchicalUri(null, Part.NULL,
-        PathPart.EMPTY, Part.NULL, Part.NULL);
-
-    /**
      * Prevents external subclassing.
      */
     private SignalUri() {}
@@ -203,8 +187,10 @@ public abstract class SignalUri implements Comparable<SignalUri> {
      *
      * @return the authority for this URI or null if not present
      */
-    
-    public abstract String getEncodedAuthority();
+
+    public static String getEncodedAuthority() {
+        return null;
+    }
 
     /**
      * Gets the decoded user information from the authority.
@@ -305,7 +291,9 @@ public abstract class SignalUri implements Comparable<SignalUri> {
      *
      * @return decoded path segments, each without a leading or trailing '/'
      */
-    public abstract List<String> getPathSegments();
+    public static List<String> getPathSegments() {
+        return null;
+    }
 
     /**
      * Gets the decoded last segment in the path.
@@ -1498,81 +1486,6 @@ public abstract class SignalUri implements Comparable<SignalUri> {
         } while (true);
 
         return Collections.unmodifiableList(values);
-    }
-
-    /**
-     * Searches the query string for the first value with the given key.
-     *
-     * <p><strong>Warning:</strong> Prior to Jelly Bean, this decoded
-     * the '+' character as '+' rather than ' '.
-     *
-     * @param key which will be encoded
-     * @throws UnsupportedOperationException if this isn't a hierarchical URI
-     * @throws NullPointerException if key is null
-     * @return the decoded value or null if no parameter is found
-     */
-    
-    public String getQueryParameter(String key) {
-        if (isOpaque()) {
-            throw new UnsupportedOperationException(NOT_HIERARCHICAL);
-        }
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-
-        final String query = getEncodedQuery();
-        if (query == null) {
-            return null;
-        }
-
-        final String encodedKey = encode(key, null);
-        final int length = query.length();
-        int start = 0;
-        do {
-            int nextAmpersand = query.indexOf('&', start);
-            int end = nextAmpersand != -1 ? nextAmpersand : length;
-
-            int separator = query.indexOf('=', start);
-            if (separator > end || separator == -1) {
-                separator = end;
-            }
-
-            if (separator - start == encodedKey.length()
-                && query.regionMatches(start, encodedKey, 0, encodedKey.length())) {
-                if (separator == end) {
-                    return "";
-                } else {
-                    String encodedValue = query.substring(separator + 1, end);
-                    return UriCodec.decode(encodedValue, true, StandardCharsets.UTF_8, false);
-                }
-            }
-
-            // Move start to end of name.
-            if (nextAmpersand != -1) {
-                start = nextAmpersand + 1;
-            } else {
-                break;
-            }
-        } while (true);
-        return null;
-    }
-
-    /**
-     * Searches the query string for the first value with the given key and interprets it
-     * as a boolean value. "false" and "0" are interpreted as <code>false</code>, everything
-     * else is interpreted as <code>true</code>.
-     *
-     * @param key which will be decoded
-     * @param defaultValue the default value to return if there is no query parameter for key
-     * @return the boolean interpretation of the query parameter key
-     */
-    public boolean getBooleanQueryParameter(String key, boolean defaultValue) {
-        String flag = getQueryParameter(key);
-        if (flag == null) {
-            return defaultValue;
-        }
-        flag = flag.toLowerCase(Locale.ROOT);
-        return (!"false".equals(flag) && !"0".equals(flag));
     }
 
     /** Identifies a null parcelled Uri. */

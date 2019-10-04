@@ -7,6 +7,7 @@ import org.muzima.turkana.data.signal.DomainFrontingTrustStore;
 import org.muzima.turkana.data.RegistrationRepository;
 import org.muzima.turkana.data.signal.SignalProtocolStoreImpl;
 import org.muzima.turkana.data.signal.SignalServiceTrustStore;
+import org.muzima.turkana.model.Registration;
 import org.muzima.turkana.utils.BuildConfig;
 import org.muzima.turkana.utils.DynamicCredentialsProvider;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.whispersystems.libsignal.state.SignalProtocolStore;
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
 import org.whispersystems.signalservice.api.crypto.SignalServiceCipher;
 import org.whispersystems.signalservice.api.messages.SignalServiceContent;
+import org.whispersystems.signalservice.api.messages.SignalServiceDataMessage;
 import org.whispersystems.signalservice.api.messages.SignalServiceEnvelope;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.push.TrustStore;
@@ -29,6 +31,7 @@ import org.whispersystems.signalservice.internal.configuration.SignalServiceUrl;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -178,6 +181,11 @@ public class RetrieveMessagesService {
     }
 
     /**
+     * Extract the actual Message Content from the Encrypted Cipher
+     * and Save as a registration message
+     *
+     * Decrypt and persist the message from
+     * {@link org.whispersystems.signalservice.api.messages.SignalServiceEnvelope}
      *
      * @param envelope
      * @throws NoSessionException
@@ -189,14 +197,22 @@ public class RetrieveMessagesService {
      * @throws InvalidKeyException
      * @throws InvalidKeyIdException
      *
-     * Extract the actual Message Content from the Encrypted Cipher
-     * and Save as a registration message
      */
     private static void processAndSaveEnvelop(SignalServiceEnvelope envelope) throws NoSessionException, UntrustedIdentityException, LegacyMessageException, InvalidVersionException, InvalidMessageException, DuplicateMessageException, InvalidKeyException, InvalidKeyIdException {
         SignalProtocolStore axolotlStore = new SignalProtocolStoreImpl();
         SignalServiceAddress localAddress = new SignalServiceAddress(LOCAL_PHONE_NUMBER);
         SignalServiceCipher cipher = new SignalServiceCipher(localAddress, axolotlStore);
         SignalServiceContent content = cipher.decrypt(envelope);
+        SignalServiceDataMessage message = content.getDataMessage().get();
+        String deviceKey = message.getBody().get();
+
+        Registration registration = new Registration();
+        registration.setDeviceId(String.valueOf(message.getProfileKey()));
+        registration.setDateRegistered(LocalDateTime.now());
+        registration.setPublicKey(deviceKey);
+        registration.setPhoneNumber(LOCAL_PHONE_NUMBER);
+
+        registrationRepository.save(registration);
 
     }
 

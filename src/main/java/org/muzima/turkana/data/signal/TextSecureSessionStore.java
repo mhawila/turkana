@@ -1,5 +1,6 @@
 package org.muzima.turkana.data.signal;
 
+import org.muzima.turkana.model.SignalSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.whispersystems.libsignal.protocol.CiphertextMessage;
 import org.whispersystems.libsignal.state.SessionRecord;
 import org.whispersystems.libsignal.state.SessionStore;
 
+import java.io.IOException;
 import java.util.List;
 
 public class TextSecureSessionStore implements SessionStore {
@@ -41,7 +43,7 @@ public class TextSecureSessionStore implements SessionStore {
     @Override
     public void storeSession( SignalProtocolAddress address,  SessionRecord record) {
         synchronized (FILE_LOCK) {
-            sessionRecordRepository.store(address.getName()), address.getDeviceId(), record);
+            sessionRecordRepository.store(address.getName());
         }
     }
 
@@ -59,14 +61,14 @@ public class TextSecureSessionStore implements SessionStore {
     @Override
     public void deleteSession(SignalProtocolAddress address) {
         synchronized (FILE_LOCK) {
-            sessionRecordRepository.delete(address.getName()), address.getDeviceId());
+            sessionRecordRepository.delete(address.getName());
         }
     }
 
     @Override
     public void deleteAllSessions(String name) {
         synchronized (FILE_LOCK) {
-            sessionRecordRepository.deleteAllFor(name));
+            sessionRecordRepository.deleteAllFor(name);
         }
     }
 
@@ -77,26 +79,27 @@ public class TextSecureSessionStore implements SessionStore {
         }
     }
 
-    public void archiveSiblingSessions(SignalProtocolAddress address) {
+    public void archiveSiblingSessions(SignalProtocolAddress address) throws IOException {
         synchronized (FILE_LOCK) {
             List<org.muzima.turkana.model.SessionRecord> sessions = sessionRecordRepository.getAllFor(address.getName());
 
             for (org.muzima.turkana.model.SessionRecord row : sessions) {
-                if (row.getDeviceId() != address.getDeviceId()) {
-                    row.getRecord().archiveCurrentState();
-                    storeSession(new SignalProtocolAddress(row.getAddress().serialize(), row.getDeviceId()), row.getRecord());
+                if (Integer.parseInt(row.getDevice()) != address.getDeviceId()) {
+                    new org.muzima.turkana.model.SessionRecord(row.getRecord()).archiveCurrentState();
+
+                    storeSession(new SignalProtocolAddress(row.getAddress(),1),
+                        new SessionRecord(row.getRecord().getBytes()));
                 }
             }
         }
     }
 
-    public void archiveAllSessions() {
+    public void archiveAllSessions() throws IOException {
         synchronized (FILE_LOCK) {
-            List<org.muzima.turkana.model.SessionRecord> sessions = sessionRecordRepository.findAll();
+            List<SignalSession> sessions = sessionRecordRepository.findAll();
 
-            for (org.muzima.turkana.model.SessionRecord row : sessions) {
-                row.getRecord().archiveCurrentState();
-                storeSession(new SignalProtocolAddress(row.getAddress().serialize(), row.getDeviceId()), row.getRecord());
+            for (SignalSession row : sessions) {
+                storeSession(new SignalProtocolAddress(row.getAddress(), Integer.parseInt(row.getDeviceId())), new SessionRecord(row.getRecord().getBytes()));
             }
         }
     }

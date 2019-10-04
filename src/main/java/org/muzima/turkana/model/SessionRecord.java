@@ -1,11 +1,8 @@
 package org.muzima.turkana.model;
 
-import org.muzima.turkana.data.signal.SessionRecordRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.whispersystems.libsignal.state.SessionState;
 import org.whispersystems.libsignal.state.StorageProtos;
 
-import javax.persistence.Entity;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -16,12 +13,9 @@ import java.util.List;
  *
  * @author Samuel Owino
  */
-public class SessionRecord {
-
+public class SessionRecord extends Session{
 
     private static final int ARCHIVED_STATES_MAX_LENGTH = 40;
-
-
 
     private SessionState sessionState = new SessionState();
     private LinkedList<SessionState> previousStates = new LinkedList<>();
@@ -44,6 +38,10 @@ public class SessionRecord {
         for (StorageProtos.SessionStructure previousStructure : record.getPreviousSessionsList()) {
             previousStates.add(new SessionState(previousStructure));
         }
+    }
+
+    public SessionRecord(String record) {
+
     }
 
     public boolean hasSessionState(int version, byte[] aliceBaseKey) {
