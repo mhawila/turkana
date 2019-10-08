@@ -1,19 +1,26 @@
 package org.muzima.turkana.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "preferences")
 public class Preference {
 
     @Id
     @GeneratedValue
     private int id;
 
+    @Column(name = "pref_key")
     private String key;
+
+    @Column(name = "pref")
     private String pref;
+
+    @Column(name = "value")
     private String value;
+
+    public Preference() {
+    }
 
     public Preference(int id, String key, String pref, String value) {
         this.id = id;

@@ -21,7 +21,6 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import java.net.MalformedURLException;
 import java.util.concurrent.TimeUnit;
 
-@Component
 public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
     private static Logger logger = LoggerFactory.getLogger(TextSecureIdentityKeyStore.class);
@@ -53,15 +52,15 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
     public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey, boolean nonBlockingApproval) throws MalformedURLException {
         synchronized (LOCK) {
             String signalAddress = LOCAL_PHONE_NUMBER;
-            Optional<Identity> identityRecord = identityRepository.getIdentity(signalAddress);
+            Identity identityRecord = identityRepository.getIdentity(signalAddress);
 
-            if (!identityRecord.isPresent()) {
+            if (identityRecord == null) {
                 logger.info(TAG, "Saving new identity...");
                 identityRepository.saveIdentity(signalAddress, identityKey, VerifiedStatus.DEFAULT, true, System.currentTimeMillis(), nonBlockingApproval);
                 return false;
             }
 
-            if (!identityRecord.get().getIdentity_key().equals(identityKey)) {
+            if (identityKey.getPublicKey().toString().equals(identityKey)) {
                 logger.info(TAG, "Replacing existing identity...");
                 VerifiedStatus verifiedStatus;
 
@@ -73,7 +72,7 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
                 return true;
             }
 
-            if (isNonBlockingApprovalRequired(identityRecord.get())) {
+            if (isNonBlockingApprovalRequired(identityRecord)) {
                 logger.info(TAG, "Setting approval status...");
                 identityRepository.setApproval(signalAddress, nonBlockingApproval);
                 return false;
@@ -114,18 +113,18 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
         }
     }
 
-    private boolean isTrustedForSending(IdentityKey identityKey, Optional<Identity> identityRecord) {
-        if (!identityRecord.isPresent()) {
+    private boolean isTrustedForSending(IdentityKey identityKey, Identity identityRecord) {
+        if (identityRecord == null) {
             logger.info("Nothing here, returning true...");
             return true;
         }
 
-        if (!identityKey.equals(identityRecord.get().getIdentity_key())) {
+        if (!identityKey.equals(identityRecord.getIdentity_key())) {
             logger.info("Identity keys don't match...");
             return false;
         }
 
-        if (isNonBlockingApprovalRequired(identityRecord.get())) {
+        if (isNonBlockingApprovalRequired(identityRecord)) {
             logger.info("Needs non-blocking approval!");
             return false;
         }

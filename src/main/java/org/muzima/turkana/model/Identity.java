@@ -1,6 +1,8 @@
 package org.muzima.turkana.model;
 
+import org.muzima.turkana.utils.Base64;
 import org.springframework.context.annotation.Primary;
+import org.whispersystems.libsignal.IdentityKey;
 
 import javax.persistence.*;
 
@@ -19,6 +21,9 @@ public class Identity {
     @Column(name = "identity_key")
     private String identity_key;
 
+    @Column(name = "fingerpring")
+    private String fingerprint;
+
     @Column(name = "timestamp")
     private String timestamp;
 
@@ -31,6 +36,9 @@ public class Identity {
     @Column(name = "verified_status")
     private String verified;
 
+    public Identity() {
+    }
+
     public Identity(String id, String address, String identity_key, String timestamp, boolean first_use, boolean nonblocking_approval, String verified) {
         this.id = id;
         this.address = address;
@@ -39,6 +47,13 @@ public class Identity {
         this.first_use = first_use;
         this.nonblocking_approval = nonblocking_approval;
         this.verified = verified;
+    }
+
+    public Identity(String signalAddress, IdentityKey identityKey,String fingerprint,long timestamp) {
+        this.address = signalAddress;
+        this.identity_key = Base64.encodeBytes(identityKey.getPublicKey().serialize());
+        this.fingerprint = fingerprint;
+        this.timestamp = String.valueOf(timestamp);
     }
 
     public String getId() {
