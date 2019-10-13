@@ -109,7 +109,13 @@ public class IdentityKeyUtil {
     }
 
     private static String retrieve(String key) {
-        return preferenceRepository.findByKey(key);
+        for (Preference preference : preferenceRepository.findAll()) {
+            if (preference.getKey().equalsIgnoreCase(key)){
+                return preference.getValue();
+            }
+        }
+
+        return null;
     }
 
     private static void save(String key, String value) {
@@ -117,7 +123,10 @@ public class IdentityKeyUtil {
     }
 
     private static void delete(String key) {
-        preferenceRepository.deleteByKey(key);
+        for (Preference preference : preferenceRepository.findAll()) {
+            if (preference.getKey().equalsIgnoreCase(key))
+                preferenceRepository.delete(preference);
+        }
     }
 
 }

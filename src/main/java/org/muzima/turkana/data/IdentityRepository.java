@@ -7,9 +7,4 @@ import org.whispersystems.libsignal.IdentityKey;
 
 public interface IdentityRepository extends JpaRepository<Identity,Long> {
 
-    Identity getIdentity(String signalAddress);
-
-    void saveIdentity(String signalAddress, IdentityKey identityKey, VerifiedStatus aDefault, boolean b, long currentTimeMillis, boolean nonBlockingApproval);
-
-    void setApproval(String signalAddress, boolean nonBlockingApproval);
 }

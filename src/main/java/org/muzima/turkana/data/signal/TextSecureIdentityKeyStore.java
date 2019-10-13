@@ -52,11 +52,20 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
     public boolean saveIdentity(SignalProtocolAddress address, IdentityKey identityKey, boolean nonBlockingApproval) throws MalformedURLException {
         synchronized (LOCK) {
             String signalAddress = LOCAL_PHONE_NUMBER;
-            Identity identityRecord = identityRepository.getIdentity(signalAddress);
+            Identity identityRecord = new Identity();
+            for (Identity identity : identityRepository.findAll()) {
+                if (identity.getAddress().equalsIgnoreCase(address.getName()))
+                    identityRecord = identity;
+            }
 
             if (identityRecord == null) {
                 logger.info(TAG, "Saving new identity...");
-                identityRepository.saveIdentity(signalAddress, identityKey, VerifiedStatus.DEFAULT, true, System.currentTimeMillis(), nonBlockingApproval);
+                identityRecord.setAddress(signalAddress);
+                identityRecord.setFirst_use(true);
+                identityRecord.setTimestamp(Long.toString(System.currentTimeMillis()));
+                identityRecord.setVerified(VerifiedStatus.DEFAULT.toString());
+
+                identityRepository.save(identityRecord);
                 return false;
             }
 
@@ -66,7 +75,13 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
                 verifiedStatus = VerifiedStatus.VERIFIED;
 
-                identityRepository.saveIdentity(signalAddress, identityKey, verifiedStatus, false, System.currentTimeMillis(), nonBlockingApproval);
+                identityRecord.setAddress(signalAddress);
+                identityRecord.setFirst_use(true);
+                identityRecord.setTimestamp(Long.toString(System.currentTimeMillis()));
+                identityRecord.setVerified(VerifiedStatus.VERIFIED.toString());
+
+                identityRepository.save(identityRecord);
+
                 IdentityUtil.markIdentityUpdate(Recipient.from(signalAddress, true));
                 SessionUtil.archiveSiblingSessions(address);
                 return true;
@@ -74,7 +89,13 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
             if (isNonBlockingApprovalRequired(identityRecord)) {
                 logger.info(TAG, "Setting approval status...");
-                identityRepository.setApproval(signalAddress, nonBlockingApproval);
+                identityRecord.setAddress(signalAddress);
+                identityRecord.setFirst_use(true);
+                identityRecord.setNonblocking_approval(true);
+                identityRecord.setTimestamp(Long.toString(System.currentTimeMillis()));
+                identityRecord.setVerified(VerifiedStatus.DEFAULT.toString());
+
+                identityRepository.save(identityRecord);
                 return false;
             }
 
@@ -104,7 +125,12 @@ public class TextSecureIdentityKeyStore implements IdentityKeyStore {
 
             switch (direction) {
                 case SENDING:
-                    return isTrustedForSending(identityKey, identityRepository.getIdentity(theirAddress));
+                    Identity identityRecord = new Identity();
+                    for (Identity identity : identityRepository.findAll()) {
+                        if (identity.getAddress().equalsIgnoreCase(address.getName()))
+                            identityRecord = identity;
+                    }
+                    return isTrustedForSending(identityKey,identityRecord);
                 case RECEIVING:
                     return true;
                 default:

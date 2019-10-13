@@ -165,18 +165,33 @@ public class MasterSecretUtil {
     }
 
     private static void save(String key, boolean value) {
-        preferenceRepository.save(new Preference(key,value));
+        preferenceRepository.save(new Preference(key, value));
     }
 
     private static byte[] retrieve(String key) throws IOException {
-        String encodedValue = preferenceRepository.findByKey(key);
+
+        String encodedValue = "";
+
+        for (Preference preference : preferenceRepository.findAll()) {
+            if (preference.getKey().equalsIgnoreCase(key)) {
+                encodedValue = preference.getValue();
+            }
+        }
+
 
         if (TextUtils.isEmpty(encodedValue)) return null;
         else return Base64.decode(encodedValue);
     }
 
     private static int retrieve(String key, int defaultValue) throws IOException {
-        return Integer.parseInt(preferenceRepository.findByKey(key));
+        String encodedValue = "";
+        for (Preference preference : preferenceRepository.findAll()) {
+            if (preference.getKey().equalsIgnoreCase(key)) {
+                encodedValue = preference.getValue();
+            }
+        }
+
+        return Integer.parseInt(encodedValue);
     }
 
     private static byte[] generateEncryptionSecret() {
@@ -252,13 +267,15 @@ public class MasterSecretUtil {
         return cipher;
     }
 
-    private static byte[] encryptWithPassphrase(byte[] encryptionSalt, int iterations, byte[] data, String passphrase)
+    private static byte[] encryptWithPassphrase(byte[] encryptionSalt, int iterations, byte[] data, String
+        passphrase)
         throws GeneralSecurityException {
         Cipher cipher = getCipherFromPassphrase(passphrase, encryptionSalt, iterations, Cipher.ENCRYPT_MODE);
         return cipher.doFinal(data);
     }
 
-    private static byte[] decryptWithPassphrase(byte[] encryptionSalt, int iterations, byte[] data, String passphrase)
+    private static byte[] decryptWithPassphrase(byte[] encryptionSalt, int iterations, byte[] data, String
+        passphrase)
         throws GeneralSecurityException, IOException {
         Cipher cipher = getCipherFromPassphrase(passphrase, encryptionSalt, iterations, Cipher.DECRYPT_MODE);
         return cipher.doFinal(data);
@@ -275,7 +292,8 @@ public class MasterSecretUtil {
         return hmac;
     }
 
-    private static byte[] verifyMac(byte[] macSalt, int iterations, byte[] encryptedAndMacdData, String passphrase) throws InvalidPassphraseException, GeneralSecurityException, IOException {
+    private static byte[] verifyMac(byte[] macSalt, int iterations, byte[] encryptedAndMacdData, String passphrase) throws
+        InvalidPassphraseException, GeneralSecurityException, IOException {
         Mac hmac = getMacForPassphrase(passphrase, macSalt, iterations);
 
         byte[] encryptedData = new byte[encryptedAndMacdData.length - hmac.getMacLength()];
@@ -290,7 +308,8 @@ public class MasterSecretUtil {
         else throw new InvalidPassphraseException("MAC Error");
     }
 
-    private static byte[] macWithPassphrase(byte[] macSalt, int iterations, byte[] data, String passphrase) throws GeneralSecurityException {
+    private static byte[] macWithPassphrase(byte[] macSalt, int iterations, byte[] data, String passphrase) throws
+        GeneralSecurityException {
         Mac hmac = getMacForPassphrase(passphrase, macSalt, iterations);
         byte[] mac = hmac.doFinal(data);
         byte[] result = new byte[data.length + mac.length];

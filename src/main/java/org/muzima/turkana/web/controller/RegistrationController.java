@@ -30,11 +30,6 @@ public class RegistrationController {
     @Autowired
     private RegistrationRepository regRepo;
 
-    @PostConstruct
-    public void scheduleRegistrationMessageService(){
-        RetrieveMessagesService.scheduleMessageRetrieval();
-    }
-
     @GetMapping(path = { "", "/{phoneNumber}" }, produces = {"application/json"})
     @ApiOperation("Returns a list of registrations or only those belonging to path variable {phoneNumber} if provided")
     public List<Registration> get(@PathVariable(required = false) final String phoneNumber) {

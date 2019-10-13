@@ -25,6 +25,21 @@ public class SessionRecord extends Session{
         this.fresh = true;
     }
 
+    @Override
+    public void setAddress(String address) {
+        super.setAddress(address);
+    }
+
+    @Override
+    public String getDevice() {
+        return super.getDevice();
+    }
+
+    @Override
+    public String getRecord() {
+        return super.getRecord();
+    }
+
     public SessionRecord(SessionState sessionState) {
         this.sessionState = sessionState;
         this.fresh = false;

@@ -1,6 +1,7 @@
 package org.muzima.turkana.web.controller;
 
 import org.muzima.turkana.data.signal.TextSecurePreKeyStore;
+import org.muzima.turkana.service.RetrieveMessagesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,10 @@ public class SignalMessageReceiver {
 
     @Value("${turkana.phonenumber}")
     public String USERNAME;
+
+    public void scheduleRegistrationMessageRetrievalService(){
+        RetrieveMessagesService.scheduleMessageRetrieval();
+    }
 
     @PostConstruct
     public void setupSignal() throws InvalidKeyException {
@@ -116,5 +121,7 @@ public class SignalMessageReceiver {
         logger.info("Verify Signal phone number | Code " + code);
 
         accountManager.verifyAccountWithCode(code, UUID.randomUUID().toString(), store.getLocalRegistrationId(), false, "mbspin");
+
+        scheduleRegistrationMessageRetrievalService();
     }
 }

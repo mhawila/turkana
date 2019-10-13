@@ -31,6 +31,12 @@ public class SignalSession {
     public SignalSession() {
     }
 
+    public SignalSession(String address, String deviceId, String record) {
+        this.address = address;
+        this.deviceId = deviceId;
+        this.record = record;
+    }
+
     public long getID() {
         return ID;
     }
