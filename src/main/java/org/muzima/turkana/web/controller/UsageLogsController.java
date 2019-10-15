@@ -1,6 +1,7 @@
 package org.muzima.turkana.web.controller;
 
 
+import io.swagger.annotations.Api;
 import org.muzima.turkana.model.UsageLogs;
 import org.muzima.turkana.service.UsageLogsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import static org.muzima.turkana.web.controller.UsageLogsController.BASE_URL;
 
 @RestController
 @RequestMapping(BASE_URL)
+@Api(tags = "Usage Logs", description = "Usage Logs")
 public class UsageLogsController {
 
     public static final String BASE_URL = "api/logs";

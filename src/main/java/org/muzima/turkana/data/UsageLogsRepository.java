@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * @author Samuel Owino
  */
 
-@Repository
+
 public interface UsageLogsRepository extends JpaRepository<UsageLogs,Long> {
 }

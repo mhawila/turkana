@@ -19,6 +19,7 @@ import javax.persistence.PersistenceContext;
 
 @Repository
 public class RegistrationQueryImpl implements RegistrationQuery {
+
     @PersistenceContext
     private EntityManager entityManager;
 

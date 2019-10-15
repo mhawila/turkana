@@ -39,6 +39,12 @@ public class Sms extends Message {
         this.transportType = "sms";
     }
 
+    public Sms(String subject, String uuid, String type) {
+        this.subject = subject;
+        this.uuid = uuid;
+        this.type = type;
+    }
+
     public String getSignalPerson() {
         return signalPerson;
     }

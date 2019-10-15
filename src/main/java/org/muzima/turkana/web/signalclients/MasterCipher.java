@@ -1,0 +1,191 @@
+package org.muzima.turkana.web.signalclients;
+
+import org.springframework.lang.NonNull;
+import org.whispersystems.libsignal.InvalidMessageException;
+import org.whispersystems.libsignal.ecc.Curve;
+import org.whispersystems.libsignal.ecc.ECPrivateKey;
+import org.whispersystems.libsignal.util.Hex;
+import org.whispersystems.signalservice.internal.util.Base64;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+public class MasterCipher {
+    private static final String TAG = MasterCipher.class.getSimpleName();
+
+    private final MasterSecret masterSecret;
+    private final Cipher encryptingCipher;
+    private final Cipher decryptingCipher;
+    private final Mac hmac;
+
+    public MasterCipher(MasterSecret masterSecret) {
+        try {
+            this.masterSecret = masterSecret;
+            this.encryptingCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            this.decryptingCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            this.hmac = Mac.getInstance("HmacSHA1");
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException nspe) {
+            throw new AssertionError(nspe);
+        }
+    }
+
+    public byte[] encryptKey(ECPrivateKey privateKey) {
+        return encryptBytes(privateKey.serialize());
+    }
+
+    public String encryptBody(@NonNull String body) {
+        return encryptAndEncodeBytes(body.getBytes());
+    }
+
+    public String decryptBody(String body) throws InvalidMessageException {
+        return new String(decodeAndDecryptBytes(body));
+    }
+
+    public ECPrivateKey decryptKey(byte[] key)
+            throws org.whispersystems.libsignal.InvalidKeyException {
+        try {
+            return Curve.decodePrivatePoint(decryptBytes(key));
+        } catch (InvalidMessageException ime) {
+            throw new org.whispersystems.libsignal.InvalidKeyException(ime);
+        }
+    }
+
+    public byte[] decryptBytes(@NonNull byte[] decodedBody) throws InvalidMessageException {
+        try {
+            Mac mac = getMac(masterSecret.getMacKey());
+            byte[] encryptedBody = verifyMacBody(mac, decodedBody);
+
+            Cipher cipher = getDecryptingCipher(masterSecret.getEncryptionKey(), encryptedBody);
+            byte[] encrypted = getDecryptedBody(cipher, encryptedBody);
+
+            return encrypted;
+        } catch (GeneralSecurityException ge) {
+            throw new InvalidMessageException(ge);
+        }
+    }
+
+    public byte[] encryptBytes(byte[] body) {
+        try {
+            Cipher cipher = getEncryptingCipher(masterSecret.getEncryptionKey());
+            Mac mac = getMac(masterSecret.getMacKey());
+
+            byte[] encryptedBody = getEncryptedBody(cipher, body);
+            byte[] encryptedAndMacBody = getMacBody(mac, encryptedBody);
+
+            return encryptedAndMacBody;
+        } catch (GeneralSecurityException ge) {
+            System.err.println("bodycipher" + ge);
+            return null;
+        }
+
+    }
+
+    public boolean verifyMacFor(String content, byte[] theirMac) {
+        byte[] ourMac = getMacFor(content);
+        System.err.println("Our Mac: " + Hex.toString(ourMac));
+        System.err.println("Thr Mac: " + Hex.toString(theirMac));
+        return Arrays.equals(ourMac, theirMac);
+    }
+
+    public byte[] getMacFor(String content) {
+        System.err.println("Macing: " + content);
+        try {
+            Mac mac = getMac(masterSecret.getMacKey());
+            return mac.doFinal(content.getBytes());
+        } catch (GeneralSecurityException ike) {
+            throw new AssertionError(ike);
+        }
+    }
+
+    private byte[] decodeAndDecryptBytes(String body) throws InvalidMessageException {
+        try {
+            byte[] decodedBody = Base64.decode(body);
+            return decryptBytes(decodedBody);
+        } catch (IOException e) {
+            throw new InvalidMessageException("Bad Base64 Encoding...", e);
+        }
+    }
+
+    private String encryptAndEncodeBytes(@NonNull byte[] bytes) {
+        byte[] encryptedAndMacBody = encryptBytes(bytes);
+        return Base64.encodeBytes(encryptedAndMacBody);
+    }
+
+    private byte[] verifyMacBody(@NonNull Mac hmac, @NonNull byte[] encryptedAndMac) throws InvalidMessageException {
+        if (encryptedAndMac.length < hmac.getMacLength()) {
+            throw new InvalidMessageException("length(encrypted body + MAC) < length(MAC)");
+        }
+
+        byte[] encrypted = new byte[encryptedAndMac.length - hmac.getMacLength()];
+        System.arraycopy(encryptedAndMac, 0, encrypted, 0, encrypted.length);
+
+        byte[] remoteMac = new byte[hmac.getMacLength()];
+        System.arraycopy(encryptedAndMac, encryptedAndMac.length - remoteMac.length, remoteMac, 0, remoteMac.length);
+
+        byte[] localMac = hmac.doFinal(encrypted);
+
+        if (!Arrays.equals(remoteMac, localMac))
+            throw new InvalidMessageException("MAC doesen't match.");
+
+        return encrypted;
+    }
+
+    private byte[] getDecryptedBody(Cipher cipher, byte[] encryptedBody) throws IllegalBlockSizeException, BadPaddingException {
+        return cipher.doFinal(encryptedBody, cipher.getBlockSize(), encryptedBody.length - cipher.getBlockSize());
+    }
+
+    private byte[] getEncryptedBody(Cipher cipher, byte[] body) throws IllegalBlockSizeException, BadPaddingException {
+        byte[] encrypted = cipher.doFinal(body);
+        byte[] iv = cipher.getIV();
+
+        byte[] ivAndBody = new byte[iv.length + encrypted.length];
+        System.arraycopy(iv, 0, ivAndBody, 0, iv.length);
+        System.arraycopy(encrypted, 0, ivAndBody, iv.length, encrypted.length);
+
+        return ivAndBody;
+    }
+
+    private Mac getMac(SecretKeySpec key) throws NoSuchAlgorithmException, InvalidKeyException {
+        //		Mac hmac = Mac.getInstance("HmacSHA1");
+        hmac.init(key);
+
+        return hmac;
+    }
+
+    private byte[] getMacBody(Mac hmac, byte[] encryptedBody) {
+        byte[] mac = hmac.doFinal(encryptedBody);
+        byte[] encryptedAndMac = new byte[encryptedBody.length + mac.length];
+
+        System.arraycopy(encryptedBody, 0, encryptedAndMac, 0, encryptedBody.length);
+        System.arraycopy(mac, 0, encryptedAndMac, encryptedBody.length, mac.length);
+
+        return encryptedAndMac;
+    }
+
+    private Cipher getDecryptingCipher(SecretKeySpec key, byte[] encryptedBody) throws InvalidKeyException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, NoSuchPaddingException {
+        //		Cipher cipher      = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        IvParameterSpec iv = new IvParameterSpec(encryptedBody, 0, decryptingCipher.getBlockSize());
+        decryptingCipher.init(Cipher.DECRYPT_MODE, key, iv);
+
+        return decryptingCipher;
+    }
+
+    private Cipher getEncryptingCipher(SecretKeySpec key) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
+        //		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        encryptingCipher.init(Cipher.ENCRYPT_MODE, key);
+
+        return encryptingCipher;
+    }
+
+}
