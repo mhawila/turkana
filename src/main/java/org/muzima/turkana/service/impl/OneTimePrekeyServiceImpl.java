@@ -4,6 +4,8 @@ import org.muzima.turkana.data.signal.OneTimePrekeyRepository;
 import org.muzima.turkana.model.OneTimePreKey;
 import org.muzima.turkana.service.OneTimePrekeyService;
 import org.muzima.turkana.utils.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -17,6 +19,8 @@ import java.io.IOException;
 
 @Service
 public class OneTimePrekeyServiceImpl implements OneTimePrekeyService {
+
+    private static Logger logger = LoggerFactory.getLogger(OneTimePrekeyServiceImpl.class);
 
     @Autowired
     OneTimePrekeyRepository prekeyRepository;
@@ -38,7 +42,7 @@ public class OneTimePrekeyServiceImpl implements OneTimePrekeyService {
     @Override
     public void insertPreKey(int keyId, PreKeyRecord record) {
 
-        System.out.println("Insert OneTimePreKey " + record.getKeyPair().getPublicKey().toString());
+        logger.info("Insert OneTimePreKey " + record.getKeyPair().getPublicKey().toString());
 
         OneTimePreKey oneTimePreKey = new OneTimePreKey();
         oneTimePreKey.setKey_id(keyId);
